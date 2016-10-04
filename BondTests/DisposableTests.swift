@@ -14,7 +14,7 @@ private class CountingDisposable: DisposableType {
   var disposeCallCount = 0
   
   func dispose() {
-    disposeCallCount++
+    disposeCallCount += 1
     isDisposed = true
   }
   

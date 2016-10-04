@@ -50,7 +50,7 @@ public struct Buffer<EventType> {
   
   /// Adds the given element to the buffer. If the buffer is already
   /// at its capacity, it will discard the oldest element.
-  public mutating func push(event: EventType) {
+  public mutating func push(_ event: EventType) {
     if size == 1 {
       if buffer.count == 0 {
         buffer.append(event)
@@ -65,7 +65,7 @@ public struct Buffer<EventType> {
     }
   }
   
-  public func replayTo(sink: EventType -> ()) {
+  public func replayTo(_ sink: (EventType) -> ()) {
     for event in buffer {
       sink(event)
     }

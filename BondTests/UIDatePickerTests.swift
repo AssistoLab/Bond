@@ -13,11 +13,11 @@ import Bond
 class UIDatePickerTests: XCTestCase {
   
   func testUIDatePickerObservable() {
-    let date1 = NSDate(timeIntervalSince1970: 10)
-    let date2 = NSDate(timeIntervalSince1970: 10000)
-    let date3 = NSDate(timeIntervalSince1970: 20000)
+    let date1 = Date(timeIntervalSince1970: 10)
+    let date2 = Date(timeIntervalSince1970: 10000)
+    let date3 = Date(timeIntervalSince1970: 20000)
     
-    let observable = Observable<NSDate>(date1)
+    let observable = Observable<Date>(date1)
     let datePicker = UIDatePicker()
     
     datePicker.date = date2
@@ -34,12 +34,12 @@ class UIDatePickerTests: XCTestCase {
   }
   
   func testOneWayOperators() {
-    let date1 = NSDate(timeIntervalSince1970: 1)
-    let date2 = NSDate(timeIntervalSince1970: 2)
-    let date3 = NSDate(timeIntervalSince1970: 3)
+    let date1 = Date(timeIntervalSince1970: 1)
+    let date2 = Date(timeIntervalSince1970: 2)
+    let date3 = Date(timeIntervalSince1970: 3)
     
     var bondedValue = date1
-    let observable = Observable<NSDate>(date2)
+    let observable = Observable<Date>(date2)
     let datePicker1 = UIDatePicker()
     let datePicker2 = UIDatePicker()
     
@@ -59,13 +59,13 @@ class UIDatePickerTests: XCTestCase {
   }
   
   func testTwoWayOperators() {
-    let date1 = NSDate(timeIntervalSince1970: 1)
-    let date2 = NSDate(timeIntervalSince1970: 2)
-    let date3 = NSDate(timeIntervalSince1970: 3)
-    let date4 = NSDate(timeIntervalSince1970: 4)
+    let date1 = Date(timeIntervalSince1970: 1)
+    let date2 = Date(timeIntervalSince1970: 2)
+    let date3 = Date(timeIntervalSince1970: 3)
+    let date4 = Date(timeIntervalSince1970: 4)
     
-    let observable1 = Observable<NSDate>(date1)
-    let observable2 = Observable<NSDate>(date2)
+    let observable1 = Observable<Date>(date1)
+    let observable2 = Observable<Date>(date2)
     let datePicker1 = UIDatePicker()
     let datePicker2 = UIDatePicker()
     

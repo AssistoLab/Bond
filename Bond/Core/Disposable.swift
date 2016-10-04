@@ -26,7 +26,7 @@ import Foundation
 
 /// A disposable that does not do anything but encapsulating disposed state.
 public final class SimpleDisposable: DisposableType {
-  public private(set) var isDisposed: Bool = false
+  public fileprivate(set) var isDisposed: Bool = false
   
   public func dispose() {
     isDisposed = true
@@ -42,10 +42,10 @@ public final class BlockDisposable: DisposableType {
     return handler == nil
   }
   
-  private var handler: (() -> ())?
-  private let lock = NSRecursiveLock(name: "com.swift-bond.Bond.BlockDisposable")
+  fileprivate var handler: (() -> ())?
+  fileprivate let lock = NSRecursiveLock(name: "com.swift-bond.Bond.BlockDisposable")
   
-  public init(_ handler: () -> ()) {
+  public init(_ handler: @escaping () -> ()) {
     self.handler = handler
   }
   
@@ -60,8 +60,8 @@ public final class BlockDisposable: DisposableType {
 /// A disposable that disposes other disposable.
 public final class SerialDisposable: DisposableType {
   
-  public private(set) var isDisposed: Bool = false
-  private let lock = NSRecursiveLock(name: "com.swift-bond.Bond.SerialDisposable")
+  public fileprivate(set) var isDisposed: Bool = false
+  fileprivate let lock = NSRecursiveLock(name: "com.swift-bond.Bond.SerialDisposable")
   
   /// Will dispose other disposable immediately if self is already disposed.
   public var otherDisposable: DisposableType? {
@@ -91,9 +91,9 @@ public final class SerialDisposable: DisposableType {
 /// A disposable that disposes a collection of disposables upon disposing.
 public final class CompositeDisposable: DisposableType {
   
-  public private(set) var isDisposed: Bool = false
-  private var disposables: [DisposableType] = []
-  private let lock = NSRecursiveLock(name: "com.swift-bond.Bond.CompositeDisposable")
+  public fileprivate(set) var isDisposed: Bool = false
+  fileprivate var disposables: [DisposableType] = []
+  fileprivate let lock = NSRecursiveLock(name: "com.swift-bond.Bond.CompositeDisposable")
   
   public convenience init() {
     self.init([])
@@ -103,7 +103,7 @@ public final class CompositeDisposable: DisposableType {
     self.disposables = disposables
   }
   
-  public func addDisposable(disposable: DisposableType) {
+  public func addDisposable(_ disposable: DisposableType) {
     lock.lock()
     if isDisposed {
       disposable.dispose()
@@ -131,7 +131,7 @@ public func += (left: CompositeDisposable, right: DisposableType) {
 
 /// A disposable container that will dispose a collection of disposables upon deinit.
 public final class DisposeBag: DisposableType {
-  private var disposables: [DisposableType] = []
+  fileprivate var disposables: [DisposableType] = []
   
   /// This will return true whenever the bag is empty.
   public var isDisposed: Bool {
@@ -143,7 +143,7 @@ public final class DisposeBag: DisposableType {
   
   /// Adds the given disposable to the bag.
   /// DisposableType will be disposed when the bag is deinitialized.
-  public func addDisposable(disposable: DisposableType) {
+  public func addDisposable(_ disposable: DisposableType) {
     disposables.append(disposable)
   }
   
@@ -161,7 +161,7 @@ public final class DisposeBag: DisposableType {
 }
 
 public extension DisposableType {
-  public func disposeIn(disposeBag: DisposeBag) {
+  public func disposeIn(_ disposeBag: DisposeBag) {
     disposeBag.addDisposable(self)
   }
 }

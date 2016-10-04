@@ -26,7 +26,7 @@ class UISliderTests: XCTestCase {
     XCTAssert(slider.value == 0.5, "Slider value reflects observable value change")
     
     slider.value = 0.8
-    slider.sendActionsForControlEvents(.ValueChanged) // simulate user input
+    slider.sendActions(for: .valueChanged) // simulate user input
     XCTAssert(observable.value == 0.8, "Observable value reflects slider value change")
   }
   

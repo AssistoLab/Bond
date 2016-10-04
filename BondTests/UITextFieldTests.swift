@@ -26,7 +26,7 @@ class UITextFieldTests: XCTestCase {
     XCTAssert(textField.text == "c", "Text field value reflects observable value change")
     
     textField.text = "d"
-    textField.sendActionsForControlEvents(.EditingChanged) //simulate user input
+    textField.sendActions(for: .editingChanged) //simulate user input
     XCTAssertEqual(textField.bnd_text.value, "d", "Observable value reflects text field value change")
     XCTAssertEqual(observable.value, "d", "Observable value reflects text view field change")
   }
@@ -35,14 +35,14 @@ class UITextFieldTests: XCTestCase {
     let observable = Observable<Bool>(false)
     let textField = UITextField()
 
-    textField.enabled = true
-    XCTAssert(textField.enabled == true, "Initial value")
+    textField.isEnabled = true
+    XCTAssert(textField.isEnabled == true, "Initial value")
 
     observable.bindTo(textField.bnd_enabled)
-    XCTAssert(textField.enabled == false, "Value after binding")
+    XCTAssert(textField.isEnabled == false, "Value after binding")
 
     observable.value = true
-    XCTAssert(textField.enabled == true, "Value after observable change")
+    XCTAssert(textField.isEnabled == true, "Value after observable change")
   }
   
   func testOneWayOperators() {

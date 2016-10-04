@@ -29,7 +29,7 @@ public final class Reference<T: AnyObject> {
   public weak var object: T?
   
   /// Used to strongly reference (retain) encapsulated object.
-  private var strongReference: T?
+  fileprivate var strongReference: T?
   
   /// Creates the wrapper and strongly references the given object.
   public init(_ object: T) {

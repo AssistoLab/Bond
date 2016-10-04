@@ -18,10 +18,10 @@ class UICollectionViewTests: XCTestCase {
   override func setUp() {
     super.setUp()
     
-    collectionView.registerClass(UICollectionViewCell.self, forCellWithReuseIdentifier: "Cell")
+    collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "Cell")
 
     data.lift().bindTo(collectionView, createCell: { (indexPath, array, collectionView) -> UICollectionViewCell in
-      return collectionView.dequeueReusableCellWithReuseIdentifier("Cell", forIndexPath: indexPath)
+      return collectionView.dequeueReusableCell(withReuseIdentifier: "Cell", for: indexPath)
     })
   }
   
@@ -30,6 +30,6 @@ class UICollectionViewTests: XCTestCase {
   }
   
   func testExample() {
-    XCTAssert(collectionView.numberOfItemsInSection(0) == 3)
+    XCTAssert(collectionView.numberOfItems(inSection: 0) == 3)
   }
 }

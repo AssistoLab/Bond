@@ -22,14 +22,14 @@ class NSLayoutConstraintTests : XCTestCase {
   func testNSLayoutConstraintActiveBond() {
     let driver = Observable<Bool>(true)
     let view = View()
-    let constraint = NSLayoutConstraint(item: view, attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: 100)
+    let constraint = NSLayoutConstraint(item: view, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 100)
     
-    XCTAssert(constraint.active == false, "Initial value")
+    XCTAssert(constraint.isActive == false, "Initial value")
     
     driver.bindTo(constraint.bnd_active)
-    XCTAssert(constraint.active == true, "Value after binding")
+    XCTAssert(constraint.isActive == true, "Value after binding")
     
     driver.value = false
-    XCTAssert(constraint.active == false, "Value after dynamic change")
+    XCTAssert(constraint.isActive == false, "Value after dynamic change")
   }
 }

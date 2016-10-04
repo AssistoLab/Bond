@@ -24,23 +24,27 @@
 
 import Foundation
 
+precedencegroup Bindable {
+  associativity: left
+}
+
 /// Unidirectional binding operator
-infix operator ->> { associativity left precedence 95 }
+infix operator ->> : Bindable
 
 /// Bidirectional binding operator
-infix operator ->>< { associativity left precedence 95 }
+infix operator ->>< : Bindable
 
 /// Establishes a unidirectional binding between the source observer and the destination sink.
-public func ->> <O: EventProducerType, B: BindableType where B.Element == O.EventType>(source: O, destination: B) -> DisposableType {
+public func ->> <O: EventProducerType, B: BindableType>(source: O, destination: B) -> DisposableType where B.Element == O.EventType {
   return source.bindTo(destination)
 }
 
-public func ->> <O: EventProducerType, B: BindableType where B.Element == Optional<O.EventType>>(source: O, destination: B) -> DisposableType {
+public func ->> <O: EventProducerType, B: BindableType>(source: O, destination: B) -> DisposableType where B.Element == Optional<O.EventType> {
   return source.bindTo(destination)
 }
 
 /// Establishes a bidirectional binding between the source and the destination.
-public func ->>< <B: BindableType where B: EventProducerType, B.Element == B.EventType>(source: B, destination: B) -> DisposableType {
+public func ->>< <B: BindableType>(source: B, destination: B) -> DisposableType where B: EventProducerType, B.Element == B.EventType {
   let d1 = source.bindTo(destination)
   let d2 = destination.bindTo(source)
   return CompositeDisposable([d1, d2])

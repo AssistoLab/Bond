@@ -14,15 +14,15 @@ class UIControlTests: XCTestCase {
   
   func test_bnd_eventObservable() {
     let control = UIControl()
-    var observedEvent: UIControlEvents = UIControlEvents.AllEvents
+    var observedEvent: UIControlEvents = UIControlEvents.allEvents
     
     control.bnd_controlEvent.observe { event  in
       observedEvent = event
     }
     
-    XCTAssert(observedEvent == UIControlEvents.AllEvents)
+    XCTAssert(observedEvent == UIControlEvents.allEvents)
     
-    control.sendActionsForControlEvents(.TouchDown)
-    XCTAssert(observedEvent == UIControlEvents.TouchDown)
+    control.sendActions(for: .touchDown)
+    XCTAssert(observedEvent == UIControlEvents.touchDown)
   }
 }

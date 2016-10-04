@@ -44,7 +44,7 @@ class ObservableTests: XCTestCase {
   
   func testObservingAndDisposingObserver() {
     var observedValue = -1
-    var capturedSink: (Int -> ())!
+    var capturedSink: ((Int) -> ())!
     
     let eventProducer = EventProducer<Int> { sink in
       capturedSink = sink
@@ -151,8 +151,8 @@ class ObservableTests: XCTestCase {
   }
   
   func testNormalLifecycleDoesNotCauseSinkToRetainObservableWhenThereIsAnObserver() {
-    var capturedSink: (Int -> ())!
-    var eventProducer: EventProducer<Int>! = EventProducer(lifecycle: .Normal) { sink in
+    var capturedSink: ((Int) -> ())!
+    var eventProducer: EventProducer<Int>! = EventProducer(lifecycle: .normal) { sink in
       capturedSink = sink
       return nil
     }

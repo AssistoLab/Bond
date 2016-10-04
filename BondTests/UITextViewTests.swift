@@ -26,7 +26,7 @@ class UITextViewTests: XCTestCase {
     XCTAssert(textView.text == "c", "Text view value reflects observable value change")
     
     textView.text = "d"
-    NSNotificationCenter.defaultCenter().postNotificationName(UITextViewTextDidChangeNotification, object: textView)
+    NotificationCenter.default.post(name: NSNotification.Name.UITextViewTextDidChange, object: textView)
     XCTAssert(textView.bnd_text.value == "d", "Observable value reflects text view value change")
     XCTAssert(observable.value == "d", "Observable value reflects text view value change")
   }
@@ -45,7 +45,7 @@ class UITextViewTests: XCTestCase {
     XCTAssert(textView.attributedText.string == "c", "Text view value reflects observable value change")
     
     textView.attributedText = NSAttributedString(string: "d")
-    NSNotificationCenter.defaultCenter().postNotificationName(UITextViewTextDidChangeNotification, object: textView)
+    NotificationCenter.default.post(name: NSNotification.Name.UITextViewTextDidChange, object: textView)
     XCTAssert(textView.bnd_attributedText.value == textView.attributedText, "Observable value reflects text view value change")
     XCTAssert(observable.value == textView.attributedText, "Observable value reflects text view value change")
   }
@@ -118,7 +118,7 @@ class UITextViewTests: XCTestCase {
     XCTAssert(textField.text! == "y", "Value after change")
     
     textField.text = "2"
-    textField.sendActionsForControlEvents(.EditingChanged)
+    textField.sendActions(for: .editingChanged)
     
     XCTAssertEqual(observable1.value, "2", "Value after change")
     XCTAssertEqual(observable2.value, "2", "Value after change")

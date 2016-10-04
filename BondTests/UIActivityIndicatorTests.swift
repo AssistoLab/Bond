@@ -17,12 +17,12 @@ class UIActivityIndicatorTests: XCTestCase {
     let view = UIActivityIndicatorView()
     
     view.startAnimating()
-    XCTAssert(view.isAnimating() == true, "Initial value")
+    XCTAssert(view.isAnimating == true, "Initial value")
     
     observable.bindTo(view.bnd_animating)
-    XCTAssert(view.isAnimating() == false, "Value after binding")
+    XCTAssert(view.isAnimating == false, "Value after binding")
     
     observable.value = true
-    XCTAssert(view.isAnimating() == true, "Value after observable change")
+    XCTAssert(view.isAnimating == true, "Value after observable change")
   }
 }

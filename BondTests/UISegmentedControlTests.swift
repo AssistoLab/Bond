@@ -25,7 +25,7 @@ class UISegmentedControlTests: XCTestCase {
     XCTAssert(segmentedControl.selectedSegmentIndex == 1, "Index reflects observable value change")
     
     segmentedControl.selectedSegmentIndex = 2
-    segmentedControl.sendActionsForControlEvents(.ValueChanged) // simulate user input
+    segmentedControl.sendActions(for: .valueChanged) // simulate user input
     XCTAssert(observable.value == 2, "Observable value reflects segmented control value change")
   }
 }

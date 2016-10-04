@@ -16,17 +16,17 @@ class UISwitchTests: XCTestCase {
     let observable = Observable<Bool>(false)
     let uiSwitch = UISwitch()
     
-    uiSwitch.on = true
-    XCTAssert(uiSwitch.on == true, "Initial value")
+    uiSwitch.isOn = true
+    XCTAssert(uiSwitch.isOn == true, "Initial value")
     
     observable.bidirectionalBindTo(uiSwitch.bnd_on)
-    XCTAssert(uiSwitch.on == false, "Switch value after binding")
+    XCTAssert(uiSwitch.isOn == false, "Switch value after binding")
     
     observable.value = true
-    XCTAssert(uiSwitch.on == true, "Switch value reflects observable value change")
+    XCTAssert(uiSwitch.isOn == true, "Switch value reflects observable value change")
     
-    uiSwitch.on = false
-    uiSwitch.sendActionsForControlEvents(.ValueChanged) //simulate user input
+    uiSwitch.isOn = false
+    uiSwitch.sendActions(for: .valueChanged) //simulate user input
     XCTAssert(observable.value == false, "Observable value reflects switch value change")
   }
   

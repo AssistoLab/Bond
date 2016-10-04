@@ -16,14 +16,14 @@ class UIButtonTests: XCTestCase {
     let observable = Observable<Bool>(false)
     let button = UIButton()
     
-    button.enabled = true
-    XCTAssert(button.enabled == true, "Initial value")
+    button.isEnabled = true
+    XCTAssert(button.isEnabled == true, "Initial value")
     
     observable.bindTo(button.bnd_enabled)
-    XCTAssert(button.enabled == false, "Value after binding")
+    XCTAssert(button.isEnabled == false, "Value after binding")
     
     observable.value = true
-    XCTAssert(button.enabled == true, "Value after observable change")
+    XCTAssert(button.isEnabled == true, "Value after observable change")
   }
   
   func testUIButtonTitleBond() {
@@ -43,18 +43,18 @@ class UIButtonTests: XCTestCase {
   func testUIButtonObservable() {
     let button = UIButton()
     
-    var observedValue = UIControlEvents.AllEvents
+    var observedValue = UIControlEvents.allEvents
     
     button.bnd_tap.observe {
-      observedValue = .TouchUpInside
+      observedValue = .touchUpInside
     }
     
-    XCTAssert(observedValue == UIControlEvents.AllEvents, "Value after binding should not be changed")
+    XCTAssert(observedValue == UIControlEvents.allEvents, "Value after binding should not be changed")
     
-    button.sendActionsForControlEvents(.TouchDragInside)
-    XCTAssert(observedValue == UIControlEvents.AllEvents, "Observable change does not pass test - should not update observedValue")
+    button.sendActions(for: .touchDragInside)
+    XCTAssert(observedValue == UIControlEvents.allEvents, "Observable change does not pass test - should not update observedValue")
     
-    button.sendActionsForControlEvents(.TouchUpInside)
-    XCTAssert(observedValue == UIControlEvents.TouchUpInside, "Observable change passes test - should update observedValue")
+    button.sendActions(for: .touchUpInside)
+    XCTAssert(observedValue == UIControlEvents.touchUpInside, "Observable change passes test - should update observedValue")
   }
 }

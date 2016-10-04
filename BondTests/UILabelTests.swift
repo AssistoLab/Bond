@@ -41,16 +41,16 @@ class UILabelTests: XCTestCase {
   }
     
   func testUILabelTextColorBond() {
-    let observable = Observable<UIColor>(UIColor.blackColor())
+    let observable = Observable<UIColor>(UIColor.black)
     let label = UILabel()
         
-    label.textColor = UIColor.redColor()
-    XCTAssert(label.textColor == UIColor.redColor(), "Initial Value")
+    label.textColor = UIColor.red
+    XCTAssert(label.textColor == UIColor.red, "Initial Value")
         
     observable.bindTo(label.bnd_textColor)
-    XCTAssert(label.textColor == UIColor.blackColor(), "Value after binding")
+    XCTAssert(label.textColor == UIColor.black, "Value after binding")
         
-    observable.value = UIColor.blueColor()
-    XCTAssert(label.textColor == UIColor.blueColor(), "Value after observable change")
+    observable.value = UIColor.blue
+    XCTAssert(label.textColor == UIColor.blue, "Value after observable change")
   }
 }

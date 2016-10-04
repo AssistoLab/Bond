@@ -16,14 +16,14 @@ class UIBarItemTests: XCTestCase {
     let observable = Observable<Bool>(false)
     let barItem = UIBarButtonItem()
     
-    barItem.enabled = true
-    XCTAssert(barItem.enabled == true, "Initial value")
+    barItem.isEnabled = true
+    XCTAssert(barItem.isEnabled == true, "Initial value")
     
     observable.bindTo(barItem.bnd_enabled)
-    XCTAssert(barItem.enabled == false, "Value after binding")
+    XCTAssert(barItem.isEnabled == false, "Value after binding")
     
     observable.value = true
-    XCTAssert(barItem.enabled == true, "Value after observable change")
+    XCTAssert(barItem.isEnabled == true, "Value after observable change")
   }
   
   func testUIBarItemTitleBond() {
