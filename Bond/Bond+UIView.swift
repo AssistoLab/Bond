@@ -34,10 +34,10 @@ private var hiddenDynamicHandleUIView: UInt8 = 0;
 extension UIView {
   
   public var dynBackgroundColor: Dynamic<UIColor> {
-    if let d: AnyObject = objc_getAssociatedObject(self, &backgroundColorDynamicHandleUIView) {
+    if let d: AnyObject = objc_getAssociatedObject(self, &backgroundColorDynamicHandleUIView) as AnyObject? {
       return (d as? Dynamic<UIColor>)!
     } else {
-      let d = InternalDynamic<UIColor>(self.backgroundColor ?? UIColor.clearColor())
+      let d = InternalDynamic<UIColor>(self.backgroundColor ?? UIColor.clear)
       let bond = Bond<UIColor>() { [weak self] v in if let s = self { s.backgroundColor = v } }
       d.bindTo(bond, fire: false, strongly: false)
       d.retain(bond)
@@ -47,7 +47,7 @@ extension UIView {
   }
   
   public var dynAlpha: Dynamic<CGFloat> {
-    if let d: AnyObject = objc_getAssociatedObject(self, &alphaDynamicHandleUIView) {
+    if let d: AnyObject = objc_getAssociatedObject(self, &alphaDynamicHandleUIView) as AnyObject? {
       return (d as? Dynamic<CGFloat>)!
     } else {
       let d = InternalDynamic<CGFloat>(self.alpha)
@@ -60,11 +60,11 @@ extension UIView {
   }
   
   public var dynHidden: Dynamic<Bool> {
-    if let d: AnyObject = objc_getAssociatedObject(self, &hiddenDynamicHandleUIView) {
+    if let d: AnyObject = objc_getAssociatedObject(self, &hiddenDynamicHandleUIView) as AnyObject? {
       return (d as? Dynamic<Bool>)!
     } else {
-      let d = InternalDynamic<Bool>(self.hidden)
-      let bond = Bond<Bool>() { [weak self] v in if let s = self { s.hidden = v } }
+      let d = InternalDynamic<Bool>(self.isHidden)
+      let bond = Bond<Bool>() { [weak self] v in if let s = self { s.isHidden = v } }
       d.bindTo(bond, fire: false, strongly: false)
       d.retain(bond)
       objc_setAssociatedObject(self, &hiddenDynamicHandleUIView, d, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN_NONATOMIC)

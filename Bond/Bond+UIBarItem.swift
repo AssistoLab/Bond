@@ -34,11 +34,11 @@ private var imageDynamicHandleUIBarItem: UInt8 = 0;
 extension UIBarItem: Bondable {
   
   public var dynEnabled: Dynamic<Bool> {
-    if let d: AnyObject = objc_getAssociatedObject(self, &enabledDynamicHandleUIBarItem) {
+    if let d: AnyObject = objc_getAssociatedObject(self, &enabledDynamicHandleUIBarItem) as AnyObject? {
       return (d as? Dynamic<Bool>)!
     } else {
-      let d = InternalDynamic<Bool>(self.enabled)
-      let bond = Bond<Bool>() { [weak self] v in if let s = self { s.enabled = v } }
+      let d = InternalDynamic<Bool>(self.isEnabled)
+      let bond = Bond<Bool>() { [weak self] v in if let s = self { s.isEnabled = v } }
       d.bindTo(bond, fire: false, strongly: false)
       d.retain(bond)
       objc_setAssociatedObject(self, &enabledDynamicHandleUIBarItem, d, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN_NONATOMIC)
@@ -47,7 +47,7 @@ extension UIBarItem: Bondable {
   }
   
   public var dynTitle: Dynamic<String> {
-    if let d: AnyObject = objc_getAssociatedObject(self, &titleDynamicHandleUIBarItem) {
+    if let d: AnyObject = objc_getAssociatedObject(self, &titleDynamicHandleUIBarItem) as AnyObject? {
       return (d as? Dynamic<String>)!
     } else {
       let d = InternalDynamic<String>(self.title ?? "")
@@ -60,7 +60,7 @@ extension UIBarItem: Bondable {
   }
   
   public var dynImage: Dynamic<UIImage?> {
-    if let d: AnyObject = objc_getAssociatedObject(self, &imageDynamicHandleUIBarItem) {
+    if let d: AnyObject = objc_getAssociatedObject(self, &imageDynamicHandleUIBarItem) as AnyObject? {
       return (d as? Dynamic<UIImage?>)!
     } else {
       let d = InternalDynamic<UIImage?>(self.image)

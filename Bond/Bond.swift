@@ -29,13 +29,13 @@
 
 import Foundation
 
-public class BondBox<T> {
+open class BondBox<T> {
   weak var bond: Bond<T>?
   internal var _hash: Int
   public init(_ b: Bond<T>) { bond = b; _hash = b.hashValue }
 }
 
-public class DynamicBox<T> {
+open class DynamicBox<T> {
   weak var dynamic: Dynamic<T>?
   public init(_ d: Dynamic<T>) { dynamic = d }
 }
@@ -44,29 +44,29 @@ public class DynamicBox<T> {
 
 // MARK: Bond
 
-public class Bond<T> {
-  public typealias Listener = T -> Void
+open class Bond<T> {
+  public typealias Listener = (T) -> Void
   
-  public var listener: Listener?
-  public var bondedDynamics: [Dynamic<T>] = []
-  public var bondedWeakDynamics: [DynamicBox<T>] = []
+  open var listener: Listener?
+  open var bondedDynamics: [Dynamic<T>] = []
+  open var bondedWeakDynamics: [DynamicBox<T>] = []
   
   public init() {
   }
   
-  public init(_ listener: Listener) {
+  public init(_ listener: @escaping Listener) {
     self.listener = listener
   }
   
-  public func bind(dynamic: Dynamic<T>) {
+  open func bind(_ dynamic: Dynamic<T>) {
     bind(dynamic, fire: true, strongly: true)
   }
   
-  public func bind(dynamic: Dynamic<T>, fire: Bool) {
+  open func bind(_ dynamic: Dynamic<T>, fire: Bool) {
     bind(dynamic, fire: fire, strongly: true)
   }
   
-  public func bind(dynamic: Dynamic<T>, fire: Bool, strongly: Bool) {
+  open func bind(_ dynamic: Dynamic<T>, fire: Bool, strongly: Bool) {
     dynamic.bonds.insert(BondBox(self))
 
     if strongly {
@@ -80,7 +80,7 @@ public class Bond<T> {
     }
   }
   
-  public func unbindAll() {
+  open func unbindAll() {
     let dynamics = bondedDynamics + bondedWeakDynamics.reduce([Dynamic<T>]()) { memo, value in
       if let dynamic = value.dynamic {
         return memo + [dynamic]
@@ -93,16 +93,16 @@ public class Bond<T> {
       dynamic.bonds.remove(BondBox<T>(self))
     }
     
-    self.bondedDynamics.removeAll(keepCapacity: true)
-    self.bondedWeakDynamics.removeAll(keepCapacity: true)
+    self.bondedDynamics.removeAll(keepingCapacity: true)
+    self.bondedWeakDynamics.removeAll(keepingCapacity: true)
   }
 }
 
 // MARK: Dynamic
 
-public class Dynamic<T> {
+open class Dynamic<T> {
   
-  private var dispatchInProgress: Bool = false
+  fileprivate var dispatchInProgress: Bool = false
   
   internal var _value: T? {
     didSet {
@@ -116,7 +116,7 @@ public class Dynamic<T> {
     }
   }
   
-  public var value: T {
+  open var value: T {
     set {
       _value = newValue
     }
@@ -129,13 +129,13 @@ public class Dynamic<T> {
     }
   }
   
-  public var valid: Bool {
+  open var valid: Bool {
     get {
       return _value != nil
     }
   }
   
-  private func dispatch(value: T) {
+  fileprivate func dispatch(_ value: T) {
     // lock
     self.dispatchInProgress = true
 
@@ -151,16 +151,16 @@ public class Dynamic<T> {
       }
     }
 
-    self.bonds.subtractInPlace(emptyBoxes)
+    self.bonds.subtract(emptyBoxes)
 
     // unlock
     self.dispatchInProgress = false
   }
   
-  public let valueBond = Bond<T>()
-  public var bonds: Set<BondBox<T>> = Set()
+  open let valueBond = Bond<T>()
+  open var bonds: Set<BondBox<T>> = Set()
 
-  private init() {
+  fileprivate init() {
     _value = nil
     valueBond.listener = { [unowned self] v in self.value = v }
   }
@@ -170,20 +170,20 @@ public class Dynamic<T> {
     valueBond.listener = { [unowned self] v in self.value = v }
   }
   
-  public func bindTo(bond: Bond<T>) {
+  open func bindTo(_ bond: Bond<T>) {
     bond.bind(self, fire: true, strongly: true)
   }
   
-  public func bindTo(bond: Bond<T>, fire: Bool) {
+  open func bindTo(_ bond: Bond<T>, fire: Bool) {
     bond.bind(self, fire: fire, strongly: true)
   }
   
-  public func bindTo(bond: Bond<T>, fire: Bool, strongly: Bool) {
+  open func bindTo(_ bond: Bond<T>, fire: Bool, strongly: Bool) {
     bond.bind(self, fire: fire, strongly: strongly)
   }
 }
 
-public class InternalDynamic<T>: Dynamic<T> {
+open class InternalDynamic<T>: Dynamic<T> {
   
   public override init() {
     super.init()
@@ -193,9 +193,9 @@ public class InternalDynamic<T>: Dynamic<T> {
     super.init(value)
   }
   
-  public var updatingFromSelf: Bool = false
-  public var retainedObjects: [AnyObject] = []
-  public func retain(object: AnyObject) {
+  open var updatingFromSelf: Bool = false
+  open var retainedObjects: [AnyObject] = []
+  open func retain(_ object: AnyObject) {
     retainedObjects.append(object)
   }
 }
@@ -203,12 +203,12 @@ public class InternalDynamic<T>: Dynamic<T> {
 // MARK: Protocols
 
 public protocol Dynamical {
-  typealias DynamicType
+  associatedtype DynamicType
   var designatedDynamic: Dynamic<DynamicType> { get }
 }
 
 public protocol Bondable {
-  typealias BondType
+  associatedtype BondType
   var designatedBond: Bond<BondType> { get }
 }
 
@@ -222,35 +222,35 @@ extension Dynamic: Bondable {
 
 public extension Dynamic
 {
-  public func map<U>(f: T -> U) -> Dynamic<U> {
+  public func map<U>(_ f: @escaping (T) -> U) -> Dynamic<U> {
     return _map(self, f: f)
   }
   
-  public func filter(f: T -> Bool) -> Dynamic<T> {
+  public func filter(_ f: @escaping (T) -> Bool) -> Dynamic<T> {
     return _filter(self, f: f)
   }
   
-  public func filter(f: (T, T) -> Bool, _ v: T) -> Dynamic<T> {
+  public func filter(_ f: @escaping (T, T) -> Bool, _ v: T) -> Dynamic<T> {
     return _filter(self) { f($0, v) }
   }
   
-  public func rewrite<U>(v:  U) -> Dynamic<U> {
+  public func rewrite<U>(_ v:  U) -> Dynamic<U> {
     return _map(self) { _ in return v}
   }
   
-  public func zip<U>(v: U) -> Dynamic<(T, U)> {
+  public func zip<U>(_ v: U) -> Dynamic<(T, U)> {
     return _map(self) { ($0, v) }
   }
   
-  public func zip<U>(d: Dynamic<U>) -> Dynamic<(T, U)> {
+  public func zip<U>(_ d: Dynamic<U>) -> Dynamic<(T, U)> {
     return reduce(self, dB: d) { ($0, $1) }
   }
   
-  public func skip(count: Int) -> Dynamic<T> {
+  public func skip(_ count: Int) -> Dynamic<T> {
     return _skip(self, count: count)
   }
     
-  public func throttle(seconds: Double, queue: dispatch_queue_t = dispatch_get_main_queue()) -> Dynamic<T> {
+  public func throttle(_ seconds: Double, queue: DispatchQueue = DispatchQueue.main) -> Dynamic<T> {
     return _throttle(self, seconds: seconds, queue: queue)
   }
 }
@@ -258,11 +258,11 @@ public extension Dynamic
 // MARK: Equatable/Hashable
 
 extension Bond: Hashable, Equatable {
-  public var hashValue: Int { return unsafeAddressOf(self).hashValue }
+  public var hashValue: Int { return Unmanaged.passUnretained(self).toOpaque().hashValue }
 }
 
 public func ==<T>(left: Bond<T>, right: Bond<T>) -> Bool {
-  return unsafeAddressOf(left) == unsafeAddressOf(right)
+  return Unmanaged.passUnretained(left).toOpaque() == Unmanaged.passUnretained(right).toOpaque()
 }
 
 extension BondBox: Equatable, Hashable {

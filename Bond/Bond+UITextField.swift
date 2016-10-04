@@ -30,20 +30,20 @@ import UIKit
 class TextFieldDynamicHelper: NSObject
 {
   weak var control: UITextField?
-  var listener: (String -> Void)?
+  var listener: ((String) -> Void)?
   
   init(control: UITextField) {
     self.control = control
     super.init()
-    control.addTarget(self, action: Selector("editingChanged:"), forControlEvents: .EditingChanged)
+    control.addTarget(self, action: #selector(TextFieldDynamicHelper.editingChanged(_:)), for: .editingChanged)
   }
   
-  func editingChanged(control: UITextField) {
+  func editingChanged(_ control: UITextField) {
     self.listener?(control.text ?? "")
   }
   
   deinit {
-    control?.removeTarget(self, action: nil, forControlEvents: .EditingChanged)
+    control?.removeTarget(self, action: nil, for: .editingChanged)
   }
 }
 
@@ -68,12 +68,12 @@ private var enabledDynamicHandleUITextField: UInt8 = 0;
 extension UITextField /*: Dynamical, Bondable */ {
   
   public var dynText: Dynamic<String> {
-    if let d: AnyObject = objc_getAssociatedObject(self, &textDynamicHandleUITextField) {
+    if let d: AnyObject = objc_getAssociatedObject(self, &textDynamicHandleUITextField) as AnyObject? {
       return (d as? Dynamic<String>)!
     } else {
       let d = TextFieldDynamic<String>(control: self)
       let bond = Bond<String>() { [weak self, weak d] v in
-        if let s = self, d = d where !d.updatingFromSelf {
+        if let s = self, let d = d , !d.updatingFromSelf {
           s.text = v
         }
       }
@@ -85,11 +85,11 @@ extension UITextField /*: Dynamical, Bondable */ {
   }
 
   public var dynEnabled: Dynamic<Bool> {
-    if let d: AnyObject = objc_getAssociatedObject(self, &enabledDynamicHandleUITextField) {
+    if let d: AnyObject = objc_getAssociatedObject(self, &enabledDynamicHandleUITextField) as AnyObject? {
       return (d as? Dynamic<Bool>)!
     } else {
-      let d = InternalDynamic<Bool>(self.enabled)
-      let bond = Bond<Bool>() { [weak self] v in if let s = self { s.enabled = v } }
+      let d = InternalDynamic<Bool>(self.isEnabled)
+      let bond = Bond<Bool>() { [weak self] v in if let s = self { s.isEnabled = v } }
       d.bindTo(bond, fire: false, strongly: false)
       d.retain(bond)
       objc_setAssociatedObject(self, &enabledDynamicHandleUITextField, d, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN_NONATOMIC)
@@ -110,7 +110,7 @@ public func ->> (left: UITextField, right: Bond<String>) {
   left.designatedDynamic ->> right
 }
 
-public func ->> <U: Bondable where U.BondType == String>(left: UITextField, right: U) {
+public func ->> <U: Bondable>(left: UITextField, right: U) where U.BondType == String {
   left.designatedDynamic ->> right.designatedBond
 }
 
@@ -126,7 +126,7 @@ public func ->> (left: UITextField, right: UITextView) {
   left.designatedDynamic ->> right.designatedBond
 }
 
-public func ->> <T: Dynamical where T.DynamicType == String>(left: T, right: UITextField) {
+public func ->> <T: Dynamical>(left: T, right: UITextField) where T.DynamicType == String {
   left.designatedDynamic ->> right.designatedBond
 }
 

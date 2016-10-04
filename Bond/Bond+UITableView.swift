@@ -27,13 +27,13 @@
 
 import UIKit
 
-extension NSIndexSet {
-  convenience init(array: [Int]) {
+extension IndexSet {
+  init(array: [Int]) {
     let set = NSMutableIndexSet()
     for index in array {
-      set.addIndex(index)
+      set.add(index)
     }
-    self.init(indexSet: set)
+    self.init(set as IndexSet)
   }
 }
 
@@ -46,21 +46,21 @@ extension NSIndexSet {
     super.init()
   }
   
-  func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+  func numberOfSections(in tableView: UITableView) -> Int {
     return self.dynamic?.count ?? 0
   }
   
-  func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+  func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
     return self.dynamic?[section].count ?? 0
   }
   
-  func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-    return self.dynamic?[indexPath.section][indexPath.item] ?? UITableViewCell()
+  func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    return self.dynamic?[(indexPath as NSIndexPath).section][(indexPath as NSIndexPath).item] ?? UITableViewCell()
   }
   
   // Forwards
   
-  func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+  func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
     if let ds = self.nextDataSource {
       return ds.tableView?(tableView, titleForHeaderInSection: section)
     } else {
@@ -68,7 +68,7 @@ extension NSIndexSet {
     }
   }
   
-  func tableView(tableView: UITableView, titleForFooterInSection section: Int) -> String? {
+  func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
     if let ds = self.nextDataSource {
       return ds.tableView?(tableView, titleForFooterInSection: section)
     } else {
@@ -76,47 +76,47 @@ extension NSIndexSet {
     }
   }
   
-  func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
+  func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
     if let ds = self.nextDataSource {
-      return ds.tableView?(tableView, canEditRowAtIndexPath: indexPath) ?? false
+      return ds.tableView?(tableView, canEditRowAt: indexPath) ?? false
     } else {
       return false
     }
   }
   
-  func tableView(tableView: UITableView, canMoveRowAtIndexPath indexPath: NSIndexPath) -> Bool {
+  func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
     if let ds = self.nextDataSource {
-      return ds.tableView?(tableView, canMoveRowAtIndexPath: indexPath) ?? false
+      return ds.tableView?(tableView, canMoveRowAt: indexPath) ?? false
     } else {
       return false
     }
   }
   
-  func sectionIndexTitlesForTableView(tableView: UITableView) -> [String]? {
+  func sectionIndexTitles(for tableView: UITableView) -> [String]? {
     if let ds = self.nextDataSource {
-      return ds.sectionIndexTitlesForTableView?(tableView) ?? []
+      return ds.sectionIndexTitles?(for: tableView) ?? []
     } else {
       return []
     }
   }
   
-  func tableView(tableView: UITableView, sectionForSectionIndexTitle title: String, atIndex index: Int) -> Int {
+  func tableView(_ tableView: UITableView, sectionForSectionIndexTitle title: String, at index: Int) -> Int {
     if let ds = self.nextDataSource {
-      return ds.tableView?(tableView, sectionForSectionIndexTitle: title, atIndex: index) ?? index
+      return ds.tableView?(tableView, sectionForSectionIndexTitle: title, at: index) ?? index
     } else {
       return index
     }
   }
   
-  func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
+  func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
     if let ds = self.nextDataSource {
-      ds.tableView?(tableView, commitEditingStyle: editingStyle, forRowAtIndexPath: indexPath)
+      ds.tableView?(tableView, commit: editingStyle, forRowAt: indexPath)
     }
   }
   
-  func tableView(tableView: UITableView, moveRowAtIndexPath sourceIndexPath: NSIndexPath, toIndexPath destinationIndexPath: NSIndexPath) {
+  func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
     if let ds = self.nextDataSource {
-      ds.tableView?(tableView, moveRowAtIndexPath: sourceIndexPath, toIndexPath: destinationIndexPath)
+      ds.tableView?(tableView, moveRowAt: sourceIndexPath, to: destinationIndexPath)
     }
   }
 }
@@ -133,7 +133,7 @@ private class UITableViewDataSourceSectionBond<T>: ArrayBond<UITableViewCell> {
       if let tableView: UITableView = self.tableView {
         perform(animated: !disableAnimation) {
           tableView.beginUpdates()
-          tableView.insertRowsAtIndexPaths(i.map { NSIndexPath(forItem: $0, inSection: section) }, withRowAnimation: UITableViewRowAnimation.Automatic)
+          tableView.insertRows(at: i.map { IndexPath(item: $0, section: section) }, with: UITableViewRowAnimation.automatic)
           tableView.endUpdates()
         }
       }
@@ -143,7 +143,7 @@ private class UITableViewDataSourceSectionBond<T>: ArrayBond<UITableViewCell> {
       if let tableView = self.tableView {
         perform(animated: !disableAnimation) {
           tableView.beginUpdates()
-          tableView.deleteRowsAtIndexPaths(i.map { NSIndexPath(forItem: $0, inSection: section) }, withRowAnimation: UITableViewRowAnimation.Automatic)
+          tableView.deleteRows(at: i.map { IndexPath(item: $0, section: section) }, with: UITableViewRowAnimation.automatic)
           tableView.endUpdates()
         }
       }
@@ -153,7 +153,7 @@ private class UITableViewDataSourceSectionBond<T>: ArrayBond<UITableViewCell> {
       if let tableView = self.tableView {
         perform(animated: !disableAnimation) {
           tableView.beginUpdates()
-          tableView.reloadRowsAtIndexPaths(i.map { NSIndexPath(forItem: $0, inSection: section) }, withRowAnimation: UITableViewRowAnimation.Automatic)
+          tableView.reloadRows(at: i.map { IndexPath(item: $0, section: section) }, with: UITableViewRowAnimation.automatic)
           tableView.endUpdates()
         }
       }
@@ -171,12 +171,12 @@ private class UITableViewDataSourceSectionBond<T>: ArrayBond<UITableViewCell> {
   }
 }
 
-public class UITableViewDataSourceBond<T>: ArrayBond<DynamicArray<UITableViewCell>> {
+open class UITableViewDataSourceBond<T>: ArrayBond<DynamicArray<UITableViewCell>> {
   weak var tableView: UITableView?
-  private var dataSource: TableViewDynamicArrayDataSource?
-  private var sectionBonds: [UITableViewDataSourceSectionBond<Void>] = []
-  public let disableAnimation: Bool
-  public weak var nextDataSource: UITableViewDataSource? {
+  fileprivate var dataSource: TableViewDynamicArrayDataSource?
+  fileprivate var sectionBonds: [UITableViewDataSourceSectionBond<Void>] = []
+  open let disableAnimation: Bool
+  open weak var nextDataSource: UITableViewDataSource? {
     didSet(newValue) {
       dataSource?.nextDataSource = newValue
     }
@@ -192,15 +192,15 @@ public class UITableViewDataSourceBond<T>: ArrayBond<DynamicArray<UITableViewCel
         if let tableView: UITableView = self?.tableView {
           perform(animated: !disableAnimation) {
             tableView.beginUpdates()
-            tableView.insertSections(NSIndexSet(array: i), withRowAnimation: UITableViewRowAnimation.Automatic)
+            tableView.insertSections(IndexSet(array: i), with: UITableViewRowAnimation.automatic)
             
-            for section in i.sort(<) {
+            for section in i.sorted(by: <) {
               let sectionBond = UITableViewDataSourceSectionBond<Void>(tableView: tableView, section: section, disableAnimation: disableAnimation)
               let sectionDynamic = array[section]
               sectionDynamic.bindTo(sectionBond)
-              s.sectionBonds.insert(sectionBond, atIndex: section)
+              s.sectionBonds.insert(sectionBond, at: section)
               
-              for var idx = section + 1; idx < s.sectionBonds.count; idx++ {
+              for idx in section + 1 ..< s.sectionBonds.count {
                 s.sectionBonds[idx].section += 1
               }
             }
@@ -216,12 +216,12 @@ public class UITableViewDataSourceBond<T>: ArrayBond<DynamicArray<UITableViewCel
         if let tableView = s.tableView {
           perform(animated: !disableAnimation) {
             tableView.beginUpdates()
-            tableView.deleteSections(NSIndexSet(array: i), withRowAnimation: UITableViewRowAnimation.Automatic)
-            for section in i.sort(>) {
+            tableView.deleteSections(IndexSet(array: i), with: UITableViewRowAnimation.automatic)
+            for section in i.sorted(by: >) {
               s.sectionBonds[section].unbindAll()
-              s.sectionBonds.removeAtIndex(section)
+              s.sectionBonds.remove(at: section)
               
-              for var idx = section; idx < s.sectionBonds.count; idx++ {
+              for idx in section ..< s.sectionBonds.count {
                 s.sectionBonds[idx].section -= 1
               }
             }
@@ -237,7 +237,7 @@ public class UITableViewDataSourceBond<T>: ArrayBond<DynamicArray<UITableViewCel
         if let tableView = s.tableView {
           perform(animated: !disableAnimation) {
             tableView.beginUpdates()
-            tableView.reloadSections(NSIndexSet(array: i), withRowAnimation: UITableViewRowAnimation.Automatic)
+            tableView.reloadSections(IndexSet(array: i), with: UITableViewRowAnimation.automatic)
 
             for section in i {
               let sectionBond = UITableViewDataSourceSectionBond<Void>(tableView: tableView, section: section, disableAnimation: disableAnimation)
@@ -261,11 +261,11 @@ public class UITableViewDataSourceBond<T>: ArrayBond<DynamicArray<UITableViewCel
     }
   }
   
-  public func bind(dynamic: DynamicArray<UITableViewCell>) {
+  open func bind(_ dynamic: DynamicArray<UITableViewCell>) {
     bind(DynamicArray([dynamic]))
   }
   
-  public override func bind(dynamic: Dynamic<Array<DynamicArray<UITableViewCell>>>, fire: Bool, strongly: Bool) {
+  open override func bind(_ dynamic: Dynamic<Array<DynamicArray<UITableViewCell>>>, fire: Bool, strongly: Bool) {
     super.bind(dynamic, fire: false, strongly: strongly)
     if let dynamic = dynamic as? DynamicArray<DynamicArray<UITableViewCell>> {
       
@@ -290,7 +290,7 @@ public class UITableViewDataSourceBond<T>: ArrayBond<DynamicArray<UITableViewCel
   }
 }
 
-private func perform(animated animated: Bool, block: () -> Void) {
+private func perform(animated: Bool, block: () -> Void) {
   if !animated {
     UIView.performWithoutAnimation(block)
   } else {

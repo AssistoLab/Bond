@@ -31,25 +31,25 @@ private var XXContext = 0
 
 @objc private class DynamicKVOHelper: NSObject {
 
-  let listener: AnyObject -> Void
+  let listener: (AnyObject) -> Void
   weak var object: NSObject?
   let keyPath: String
   
-  init(keyPath: String, object: NSObject, listener: AnyObject -> Void) {
+  init(keyPath: String, object: NSObject, listener: @escaping (AnyObject) -> Void) {
     self.keyPath = keyPath
     self.object = object
     self.listener = listener
     super.init()
-    self.object?.addObserver(self, forKeyPath: keyPath, options: .New, context: &XXContext)
+    self.object?.addObserver(self, forKeyPath: keyPath, options: .new, context: &XXContext)
   }
   
   deinit {
     object?.removeObserver(self, forKeyPath: keyPath)
   }
   
-  override dynamic func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String : AnyObject]?, context: UnsafeMutablePointer<Void>) {
+  override dynamic func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
     if context == &XXContext {
-      if let newValue: AnyObject = change?[NSKeyValueChangeNewKey] {
+      if let newValue: AnyObject = change?[NSKeyValueChangeKey.newKey] as AnyObject? {
         listener(newValue)
       }
     }
@@ -57,25 +57,25 @@ private var XXContext = 0
 }
 
 @objc private class DynamicNotificationCenterHelper: NSObject {
-  let listener: NSNotification -> Void
+  let listener: (Notification) -> Void
   
-  init(notificationName: String, object: AnyObject?, listener: NSNotification -> Void) {
+  init(notificationName: String, object: AnyObject?, listener: @escaping (Notification) -> Void) {
     self.listener = listener
     super.init()
-    NSNotificationCenter.defaultCenter().addObserver(self, selector: "didReceiveNotification:", name: notificationName, object: object)
+    NotificationCenter.default.addObserver(self, selector: #selector(DynamicNotificationCenterHelper.didReceiveNotification(_:)), name: NSNotification.Name(rawValue: notificationName), object: object)
   }
   
   deinit {
-    NSNotificationCenter.defaultCenter().removeObserver(self)
+    NotificationCenter.default.removeObserver(self)
   }
   
-  dynamic func didReceiveNotification(notification: NSNotification) {
+  dynamic func didReceiveNotification(_ notification: Notification) {
     listener(notification)
   }
 }
 
-public func dynamicObservableFor<T>(object: NSObject, keyPath: String, defaultValue: T) -> Dynamic<T> {
-  let keyPathValue: AnyObject? = object.valueForKeyPath(keyPath)
+public func dynamicObservableFor<T>(_ object: NSObject, keyPath: String, defaultValue: T) -> Dynamic<T> {
+  let keyPathValue: AnyObject? = object.value(forKeyPath: keyPath) as AnyObject?
   let value: T = (keyPathValue != nil) ? (keyPathValue as? T)! : defaultValue
   let dynamic = InternalDynamic(value)
   
@@ -95,8 +95,8 @@ public func dynamicObservableFor<T>(object: NSObject, keyPath: String, defaultVa
   return dynamic
 }
 
-public func dynamicObservableFor<T>(object: NSObject, keyPath: String, from: AnyObject? -> T, to: T -> AnyObject?) -> Dynamic<T> {
-  let keyPathValue: AnyObject? = object.valueForKeyPath(keyPath)
+public func dynamicObservableFor<T>(_ object: NSObject, keyPath: String, from: @escaping (AnyObject?) -> T, to: @escaping (T) -> AnyObject?) -> Dynamic<T> {
+  let keyPathValue: AnyObject? = object.value(forKeyPath: keyPath) as AnyObject?
   let dynamic = InternalDynamic(from(keyPathValue))
   
   let helper = DynamicKVOHelper(keyPath: keyPath, object: object) {
@@ -119,7 +119,7 @@ public func dynamicObservableFor<T>(object: NSObject, keyPath: String, from: Any
   return dynamic
 }
 
-public func dynamicObservableFor<T>(notificationName: String, object: AnyObject?, parser: NSNotification -> T) -> InternalDynamic<T> {
+public func dynamicObservableFor<T>(_ notificationName: String, object: AnyObject?, parser: @escaping (Notification) -> T) -> InternalDynamic<T> {
   let dynamic: InternalDynamic<T> = InternalDynamic()
   
   let helper = DynamicNotificationCenterHelper(notificationName: notificationName, object: object) {
@@ -135,12 +135,12 @@ public func dynamicObservableFor<T>(notificationName: String, object: AnyObject?
 
 
 public extension Dynamic {
-  public class func asObservableFor(object: NSObject, keyPath: String, defaultValue: T) -> Dynamic<T> {
+  public class func asObservableFor(_ object: NSObject, keyPath: String, defaultValue: T) -> Dynamic<T> {
     let dynamic: Dynamic<T> = dynamicObservableFor(object, keyPath: keyPath, defaultValue: defaultValue)
     return dynamic
   }
   
-  public class func asObservableFor(notificationName: String, object: AnyObject?, parser: NSNotification -> T) -> Dynamic<T> {
+  public class func asObservableFor(_ notificationName: String, object: AnyObject?, parser: @escaping (Notification) -> T) -> Dynamic<T> {
     let dynamic: InternalDynamic<T> = dynamicObservableFor(notificationName, object: object, parser: parser)
     return dynamic
   }

@@ -27,9 +27,13 @@
 
 // MARK: Operators
 
-infix operator ->> { associativity left precedence 105 }
-infix operator ->| { associativity left precedence 105 }
-infix operator <->> { associativity left precedence 100 }
+precedencegroup Bindable {
+	associativity: left
+}
+
+infix operator ->> : Bindable
+infix operator ->| : Bindable
+infix operator <->> : Bindable
 
 
 // MARK: Bind and fire
@@ -42,15 +46,15 @@ public func ->> <T>(left: Dynamic<T>, right: Dynamic<T>) {
   left ->> right.valueBond
 }
 
-public func ->> <T: Dynamical, U where T.DynamicType == U>(left: T, right: Bond<U>) {
+public func ->> <T: Dynamical, U>(left: T, right: Bond<U>) where T.DynamicType == U {
   left.designatedDynamic ->> right
 }
 
-public func ->> <T: Dynamical, U: Bondable where T.DynamicType == U.BondType>(left: T, right: U) {
+public func ->> <T: Dynamical, U: Bondable>(left: T, right: U) where T.DynamicType == U.BondType {
   left.designatedDynamic ->> right.designatedBond
 }
 
-public func ->> <T, U: Bondable where U.BondType == T>(left: Dynamic<T>, right: U) {
+public func ->> <T, U: Bondable>(left: Dynamic<T>, right: U) where U.BondType == T {
   left ->> right.designatedBond
 }
 
@@ -61,21 +65,21 @@ public func ->| <T>(left: Dynamic<T>, right: Bond<T>) {
   right.bind(left, fire: false)
 }
 
-public func ->| <T>(left: Dynamic<T>, right: T -> Void) -> Bond<T> {
+public func ->| <T>(left: Dynamic<T>, right: @escaping (T) -> Void) -> Bond<T> {
   let bond = Bond<T>(right)
   bond.bind(left, fire: false)
   return bond
 }
 
-public func ->| <T: Dynamical, U where T.DynamicType == U>(left: T, right: Bond<U>) {
+public func ->| <T: Dynamical, U>(left: T, right: Bond<U>) where T.DynamicType == U {
   left.designatedDynamic ->| right
 }
 
-public func ->| <T: Dynamical, U: Bondable where T.DynamicType == U.BondType>(left: T, right: U) {
+public func ->| <T: Dynamical, U: Bondable>(left: T, right: U) where T.DynamicType == U.BondType {
   left.designatedDynamic ->| right.designatedBond
 }
 
-public func ->| <T, U: Bondable where U.BondType == T>(left: Dynamic<T>, right: U) {
+public func ->| <T, U: Bondable>(left: Dynamic<T>, right: U) where U.BondType == T {
   left ->| right.designatedBond
 }
 

@@ -30,20 +30,20 @@ import UIKit
 class SliderDynamicHelper: NSObject
 {
   weak var control: UISlider?
-  var listener: (Float -> Void)?
+  var listener: ((Float) -> Void)?
   
   init(control: UISlider) {
     self.control = control
     super.init()
-    control.addTarget(self, action: Selector("valueChanged:"), forControlEvents: .ValueChanged)
+    control.addTarget(self, action: #selector(SliderDynamicHelper.valueChanged(_:)), for: .valueChanged)
   }
   
-  func valueChanged(slider: UISlider) {
+  func valueChanged(_ slider: UISlider) {
     self.listener?(slider.value)
   }
   
   deinit {
-    control?.removeTarget(self, action: nil, forControlEvents: .ValueChanged)
+    control?.removeTarget(self, action: nil, for: .valueChanged)
   }
 }
 
@@ -67,13 +67,13 @@ private var valueDynamicHandleUISlider: UInt8 = 0;
 
 extension UISlider /*: Dynamical, Bondable */ {
   public var dynValue: Dynamic<Float> {
-    if let d: AnyObject = objc_getAssociatedObject(self, &valueDynamicHandleUISlider) {
+    if let d: AnyObject = objc_getAssociatedObject(self, &valueDynamicHandleUISlider) as AnyObject? {
       return (d as? Dynamic<Float>)!
     } else {
       let d = SliderDynamic<Float>(control: self)
       
       let bond = Bond<Float>() { [weak self, weak d] v in
-        if let s = self, d = d where !d.updatingFromSelf {
+        if let s = self, let d = d , !d.updatingFromSelf {
           s.value = v
         }
       }
@@ -98,7 +98,7 @@ public func ->> (left: UISlider, right: Bond<Float>) {
   left.designatedDynamic ->> right
 }
 
-public func ->> <U: Bondable where U.BondType == Float>(left: UISlider, right: U) {
+public func ->> <U: Bondable>(left: UISlider, right: U) where U.BondType == Float {
   left.designatedDynamic ->> right.designatedBond
 }
 

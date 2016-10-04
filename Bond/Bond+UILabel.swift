@@ -32,7 +32,7 @@ private var attributedTextDynamicHandleUILabel: UInt8 = 0;
 
 extension UILabel: Bondable {
   public var dynText: Dynamic<String> {
-    if let d: AnyObject = objc_getAssociatedObject(self, &textDynamicHandleUILabel) {
+    if let d: AnyObject = objc_getAssociatedObject(self, &textDynamicHandleUILabel) as AnyObject? {
       return (d as? Dynamic<String>)!
     } else {
       let d = InternalDynamic<String>(self.text ?? "")
@@ -45,7 +45,7 @@ extension UILabel: Bondable {
   }
   
   public var dynAttributedText: Dynamic<NSAttributedString> {
-    if let d: AnyObject = objc_getAssociatedObject(self, &attributedTextDynamicHandleUILabel) {
+    if let d: AnyObject = objc_getAssociatedObject(self, &attributedTextDynamicHandleUILabel) as AnyObject? {
       return (d as? Dynamic<NSAttributedString>)!
     } else {
       let d = InternalDynamic<NSAttributedString>(self.attributedText ?? NSAttributedString(string: ""))

@@ -33,10 +33,10 @@ private var attributedTextDynamicHandleUITextView: UInt8 = 0;
 extension UITextView: Bondable {
   
   public var dynText: Dynamic<String> {
-    if let d: AnyObject = objc_getAssociatedObject(self, &textDynamicHandleUITextView) {
+    if let d: AnyObject = objc_getAssociatedObject(self, &textDynamicHandleUITextView) as AnyObject? {
       return (d as? Dynamic<String>)!
     } else {
-      let d: InternalDynamic<String> = dynamicObservableFor(UITextViewTextDidChangeNotification, object: self) {
+      let d: InternalDynamic<String> = dynamicObservableFor(NSNotification.Name.UITextViewTextDidChange.rawValue, object: self) {
         notification -> String in
         if let textView = notification.object as? UITextView  {
           return textView.text ?? ""
@@ -46,7 +46,7 @@ extension UITextView: Bondable {
       }
       
       let bond = Bond<String>() { [weak self, weak d] v in
-        if let s = self, d = d where !d.updatingFromSelf {
+        if let s = self, let d = d , !d.updatingFromSelf {
           s.text = v
         }
       }
@@ -59,10 +59,10 @@ extension UITextView: Bondable {
   }
   
   public var dynAttributedText: Dynamic<NSAttributedString> {
-    if let d: AnyObject = objc_getAssociatedObject(self, &attributedTextDynamicHandleUITextView) {
+    if let d: AnyObject = objc_getAssociatedObject(self, &attributedTextDynamicHandleUITextView) as AnyObject? {
       return (d as? Dynamic<NSAttributedString>)!
     } else {
-      let d: InternalDynamic<NSAttributedString> = dynamicObservableFor(UITextViewTextDidChangeNotification, object: self) {
+      let d: InternalDynamic<NSAttributedString> = dynamicObservableFor(NSNotification.Name.UITextViewTextDidChange.rawValue, object: self) {
         notification -> NSAttributedString in
         if let textView = notification.object as? UITextView  {
           return textView.attributedText ?? NSAttributedString(string: "")
@@ -72,7 +72,7 @@ extension UITextView: Bondable {
       }
       
       let bond = Bond<NSAttributedString>() { [weak self, weak d] v in
-        if let s = self, d = d where !d.updatingFromSelf {
+        if let s = self, let d = d , !d.updatingFromSelf {
           s.attributedText = v
         }
       }
@@ -97,7 +97,7 @@ public func ->> (left: UITextView, right: Bond<String>) {
   left.designatedDynamic ->> right
 }
 
-public func ->> <U: Bondable where U.BondType == String>(left: UITextView, right: U) {
+public func ->> <U: Bondable>(left: UITextView, right: U) where U.BondType == String {
   left.designatedDynamic ->> right.designatedBond
 }
 
@@ -113,7 +113,7 @@ public func ->> (left: UITextView, right: UITextField) {
   left.designatedDynamic ->> right.designatedBond
 }
 
-public func ->> <T: Dynamical where T.DynamicType == String>(left: T, right: UITextView) {
+public func ->> <T: Dynamical>(left: T, right: UITextView) where T.DynamicType == String {
   left.designatedDynamic ->> right.designatedBond
 }
 

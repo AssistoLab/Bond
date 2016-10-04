@@ -17,22 +17,22 @@ import UIKit
     super.init()
   }
   
-  func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int {
+  func numberOfSections(in collectionView: UICollectionView) -> Int {
     return self.dynamic?.count ?? 0
   }
   
-  func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+  func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
     return self.dynamic?[section].count ?? 0
   }
   
-  func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
-    return self.dynamic?[indexPath.section][indexPath.item] ?? UICollectionViewCell()
+  func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    return self.dynamic?[(indexPath as NSIndexPath).section][(indexPath as NSIndexPath).item] ?? UICollectionViewCell()
   }
   
   // Forwards
   
-  func collectionView(collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, atIndexPath indexPath: NSIndexPath) -> UICollectionReusableView {
-    if let result = self.nextDataSource?.collectionView?(collectionView, viewForSupplementaryElementOfKind: kind, atIndexPath: indexPath) {
+  func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+    if let result = self.nextDataSource?.collectionView?(collectionView, viewForSupplementaryElementOfKind: kind, at: indexPath) {
       return result
     } else {
       fatalError("Defining Supplementary view either in Storyboard or by registering a class or nib file requires you to implement method collectionView:viewForSupplementaryElementOfKind:indexPath in your data soruce! To provide data source, make a class (usually your view controller) adhere to protocol UICollectionViewDataSource and implement method collectionView:viewForSupplementaryElementOfKind:indexPath. Register instance of your class as next data source with UICollectionViewDataSourceBond object by setting its nextDataSource property. Make sure you set it before binding takes place!")
@@ -52,7 +52,7 @@ private class UICollectionViewDataSourceSectionBond<T>: ArrayBond<UICollectionVi
     self.didInsertListener = { [unowned self] a, i in
       if let collectionView: UICollectionView = self.collectionView {
         collectionView.performBatchUpdates({
-          collectionView.insertItemsAtIndexPaths(i.map { NSIndexPath(forItem: $0, inSection: section) })
+          collectionView.insertItems(at: i.map { IndexPath(item: $0, section: section) })
           }, completion: nil)
       }
     }
@@ -60,7 +60,7 @@ private class UICollectionViewDataSourceSectionBond<T>: ArrayBond<UICollectionVi
     self.didRemoveListener = { [unowned self] a, i in
       if let collectionView = self.collectionView {
         collectionView.performBatchUpdates({
-          collectionView.deleteItemsAtIndexPaths(i.map { NSIndexPath(forItem: $0, inSection: section) })
+          collectionView.deleteItems(at: i.map { IndexPath(item: $0, section: section) })
           }, completion: nil)
       }
     }
@@ -68,7 +68,7 @@ private class UICollectionViewDataSourceSectionBond<T>: ArrayBond<UICollectionVi
     self.didUpdateListener = { [unowned self] a, i in
       if let collectionView = self.collectionView {
         collectionView.performBatchUpdates({
-          collectionView.reloadItemsAtIndexPaths(i.map { NSIndexPath(forItem: $0, inSection: section) })
+          collectionView.reloadItems(at: i.map { IndexPath(item: $0, section: section) })
           }, completion: nil)
       }
     }
@@ -85,12 +85,12 @@ private class UICollectionViewDataSourceSectionBond<T>: ArrayBond<UICollectionVi
   }
 }
 
-public class UICollectionViewDataSourceBond<T>: ArrayBond<DynamicArray<UICollectionViewCell>> {
+open class UICollectionViewDataSourceBond<T>: ArrayBond<DynamicArray<UICollectionViewCell>> {
   weak var collectionView: UICollectionView?
-  private var dataSource: CollectionViewDynamicArrayDataSource?
-  private var sectionBonds: [UICollectionViewDataSourceSectionBond<Void>] = []
+  fileprivate var dataSource: CollectionViewDynamicArrayDataSource?
+  fileprivate var sectionBonds: [UICollectionViewDataSourceSectionBond<Void>] = []
   
-  public weak var nextDataSource: UICollectionViewDataSource? {
+  open weak var nextDataSource: UICollectionViewDataSource? {
     didSet(newValue) {
       dataSource?.nextDataSource = newValue
     }
@@ -104,16 +104,16 @@ public class UICollectionViewDataSourceBond<T>: ArrayBond<DynamicArray<UICollect
       if let s = self {
         if let collectionView: UICollectionView = self?.collectionView {
           collectionView.performBatchUpdates({
-            collectionView.insertSections(NSIndexSet(array: i))
+            collectionView.insertSections(IndexSet(array: i))
             }, completion: nil)
           
-          for section in i.sort(<) {
+          for section in i.sorted(by: <) {
             let sectionBond = UICollectionViewDataSourceSectionBond<Void>(collectionView: collectionView, section: section)
             let sectionDynamic = array[section]
             sectionDynamic.bindTo(sectionBond)
-            s.sectionBonds.insert(sectionBond, atIndex: section)
+            s.sectionBonds.insert(sectionBond, at: section)
             
-            for var idx = section + 1; idx < s.sectionBonds.count; idx++ {
+            for idx in section + 1 ..< s.sectionBonds.count {
               s.sectionBonds[idx].section += 1
             }
           }
@@ -125,14 +125,14 @@ public class UICollectionViewDataSourceBond<T>: ArrayBond<DynamicArray<UICollect
       if let s = self {
         if let collectionView = s.collectionView {
           collectionView.performBatchUpdates({
-            collectionView.deleteSections(NSIndexSet(array: i))
+            collectionView.deleteSections(IndexSet(array: i))
             }, completion: nil)
           
-          for section in i.sort(>) {
+          for section in i.sorted(by: >) {
             s.sectionBonds[section].unbindAll()
-            s.sectionBonds.removeAtIndex(section)
+            s.sectionBonds.remove(at: section)
             
-            for var idx = section; idx < s.sectionBonds.count; idx++ {
+            for idx in section ..< s.sectionBonds.count {
               s.sectionBonds[idx].section -= 1
             }
           }
@@ -143,7 +143,7 @@ public class UICollectionViewDataSourceBond<T>: ArrayBond<DynamicArray<UICollect
     self.didUpdateListener = { [weak self] array, i in
       if let collectionView = self?.collectionView {
         collectionView.performBatchUpdates({
-          collectionView.reloadSections(NSIndexSet(array: i))
+          collectionView.reloadSections(IndexSet(array: i))
           }, completion: nil)
         
         for section in i {
@@ -164,11 +164,11 @@ public class UICollectionViewDataSourceBond<T>: ArrayBond<DynamicArray<UICollect
     }
   }
   
-  public func bind(dynamic: DynamicArray<UICollectionViewCell>) {
+  open func bind(_ dynamic: DynamicArray<UICollectionViewCell>) {
     bind(DynamicArray([dynamic]))
   }
   
-  public override func bind(dynamic: Dynamic<Array<DynamicArray<UICollectionViewCell>>>, fire: Bool, strongly: Bool) {
+  open override func bind(_ dynamic: Dynamic<Array<DynamicArray<UICollectionViewCell>>>, fire: Bool, strongly: Bool) {
     super.bind(dynamic, fire: false, strongly: strongly)
     if let dynamic = dynamic as? DynamicArray<DynamicArray<UICollectionViewCell>> {
       
