@@ -29,6 +29,7 @@
 
 precedencegroup Bindable {
 	associativity: left
+	lowerThan: CastingPrecedence
 }
 
 infix operator ->> : Bindable
