@@ -31,11 +31,11 @@ private var XXContext = 0
 
 @objc private class DynamicKVOHelper: NSObject {
 
-  let listener: (AnyObject) -> Void
+  let listener: (Any) -> Void
   weak var object: NSObject?
   let keyPath: String
   
-  init(keyPath: String, object: NSObject, listener: @escaping (AnyObject) -> Void) {
+  init(keyPath: String, object: NSObject, listener: @escaping (Any) -> Void) {
     self.keyPath = keyPath
     self.object = object
     self.listener = listener
@@ -49,7 +49,7 @@ private var XXContext = 0
   
   override dynamic func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
     if context == &XXContext {
-      if let newValue: AnyObject = change?[NSKeyValueChangeKey.newKey] as AnyObject? {
+      if let newValue = change?[NSKeyValueChangeKey.newKey] {
         listener(newValue)
       }
     }
@@ -59,7 +59,7 @@ private var XXContext = 0
 @objc private class DynamicNotificationCenterHelper: NSObject {
   let listener: (Notification) -> Void
   
-  init(notificationName: String, object: AnyObject?, listener: @escaping (Notification) -> Void) {
+  init(notificationName: String, object: Any?, listener: @escaping (Notification) -> Void) {
     self.listener = listener
     super.init()
     NotificationCenter.default.addObserver(self, selector: #selector(DynamicNotificationCenterHelper.didReceiveNotification(_:)), name: NSNotification.Name(rawValue: notificationName), object: object)
@@ -75,12 +75,12 @@ private var XXContext = 0
 }
 
 public func dynamicObservableFor<T>(_ object: NSObject, keyPath: String, defaultValue: T) -> Dynamic<T> {
-  let keyPathValue: AnyObject? = object.value(forKeyPath: keyPath) as AnyObject?
+  let keyPathValue = object.value(forKeyPath: keyPath)
   let value: T = (keyPathValue != nil) ? (keyPathValue as? T)! : defaultValue
   let dynamic = InternalDynamic(value)
   
   let helper = DynamicKVOHelper(keyPath: keyPath, object: object) {
-    [unowned dynamic] (v: AnyObject) -> Void in
+    [unowned dynamic] (v: Any) -> Void in
     
     dynamic.updatingFromSelf = true
     if v is NSNull {
@@ -95,12 +95,12 @@ public func dynamicObservableFor<T>(_ object: NSObject, keyPath: String, default
   return dynamic
 }
 
-public func dynamicObservableFor<T>(_ object: NSObject, keyPath: String, from: @escaping (AnyObject?) -> T, to: @escaping (T) -> AnyObject?) -> Dynamic<T> {
-  let keyPathValue: AnyObject? = object.value(forKeyPath: keyPath) as AnyObject?
+public func dynamicObservableFor<T>(_ object: NSObject, keyPath: String, from: @escaping (Any?) -> T, to: @escaping (T) -> Any?) -> Dynamic<T> {
+  let keyPathValue = object.value(forKeyPath: keyPath)
   let dynamic = InternalDynamic(from(keyPathValue))
   
   let helper = DynamicKVOHelper(keyPath: keyPath, object: object) {
-    [unowned dynamic] (v: AnyObject?) -> Void in
+    [unowned dynamic] (v: Any?) -> Void in
     dynamic.updatingFromSelf = true
     dynamic.value = from(v)
     dynamic.updatingFromSelf = false
@@ -119,7 +119,7 @@ public func dynamicObservableFor<T>(_ object: NSObject, keyPath: String, from: @
   return dynamic
 }
 
-public func dynamicObservableFor<T>(_ notificationName: String, object: AnyObject?, parser: @escaping (Notification) -> T) -> InternalDynamic<T> {
+public func dynamicObservableFor<T>(_ notificationName: String, object: Any?, parser: @escaping (Notification) -> T) -> InternalDynamic<T> {
   let dynamic: InternalDynamic<T> = InternalDynamic()
   
   let helper = DynamicNotificationCenterHelper(notificationName: notificationName, object: object) {
@@ -140,7 +140,7 @@ public extension Dynamic {
     return dynamic
   }
   
-  public class func asObservableFor(_ notificationName: String, object: AnyObject?, parser: @escaping (Notification) -> T) -> Dynamic<T> {
+  public class func asObservableFor(_ notificationName: String, object: Any?, parser: @escaping (Notification) -> T) -> Dynamic<T> {
     let dynamic: InternalDynamic<T> = dynamicObservableFor(notificationName, object: object, parser: parser)
     return dynamic
   }

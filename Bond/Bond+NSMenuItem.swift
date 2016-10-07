@@ -38,8 +38,8 @@ extension NSMenuItem: Bondable, Dynamical {
     }
 
     public var dynEnabled: Dynamic<Bool> {
-        if let d: AnyObject = objc_getAssociatedObject(self, &enabledDynamicHandleNSMenuItem) {
-            return (d as? Dynamic<Bool>)!
+        if let d = objc_getAssociatedObject(self, &enabledDynamicHandleNSMenuItem) as Any? {
+            return d as! Dynamic<Bool>
         } else {
             let d = InternalDynamic<Bool>(self.enabled)
             let bond = Bond<Bool>() { [weak self] v in
@@ -56,8 +56,8 @@ extension NSMenuItem: Bondable, Dynamical {
     }
 
     public var dynState: Dynamic<Int> {
-        if let d: AnyObject = objc_getAssociatedObject(self, &stateDynamicHandleNSMenuItem) {
-            return (d as? Dynamic<Int>)!
+        if let d = objc_getAssociatedObject(self, &stateDynamicHandleNSMenuItem) as Any? {
+            return d as! Dynamic<Int>
         } else {
             let d = InternalDynamic<Int>(self.state)
             let bond = Bond<Int>() { [weak self] v in

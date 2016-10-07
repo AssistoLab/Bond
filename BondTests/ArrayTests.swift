@@ -287,7 +287,7 @@ class ArrayTests: XCTestCase {
     var callCount: Int = 0
     let array = DynamicArray<Int>([])
     let mapped = array.map { e, i -> Test in
-      callCount++
+      callCount += 1
       return Test(e)
     }
     
@@ -430,11 +430,11 @@ class ArrayTests: XCTestCase {
     let bond = ArrayBond<Int>()
     var testCount = 0
     bond.willResetListener = { array in
-      testCount++
+      testCount += 1
       XCTAssert(array == expectedBefore, "before arrays don't match (\(array) vs \(expectedBefore))")
     }
     bond.didResetListener = { array in
-      testCount++
+      testCount += 1
       XCTAssert(array == expectedAfter, "after arrays don't match (\(array) vs \(expectedAfter))")
     }
     array ->> bond
@@ -452,11 +452,11 @@ class ArrayTests: XCTestCase {
     let bond = ArrayBond<Int>()
     var testCount = 0
     bond.willResetListener = { array in
-      testCount++
+      testCount += 1
       XCTAssert(array == expectedBefore, "before arrays don't match (\(array) vs \(expectedBefore))")
     }
     bond.didResetListener = { array in
-      testCount++
+      testCount += 1
       XCTAssert(array == expectedAfter, "after arrays don't match (\(array) vs \(expectedAfter))")
     }
     array ->> bond
@@ -474,11 +474,11 @@ class ArrayTests: XCTestCase {
     let bond = ArrayBond<Int>()
     var testCount = 0
     bond.willResetListener = { array in
-      testCount++
+      testCount += 1
       XCTAssert(array == expectedBefore, "before arrays don't match (\(array) vs \(expectedBefore))")
     }
     bond.didResetListener = { array in
-      testCount++
+      testCount += 1
       XCTAssert(array == expectedAfter, "after arrays don't match (\(array) vs \(expectedAfter))")
     }
     array ->> bond
@@ -490,42 +490,42 @@ class ArrayTests: XCTestCase {
 
   func testArrayDeliverOn() {
     let array = DynamicArray<Int>([1, 2, 3])
-    let deliveredOn: DynamicArray<Int> = deliver(array, on: dispatch_get_main_queue())
+    let deliveredOn: DynamicArray<Int> = deliver(array, on: DispatchQueue.main)
     let bond = ArrayBond<Int>()
     
-    let e1 = expectationWithDescription("Insert")
-    let e2 = expectationWithDescription("Remove")
-    let e3 = expectationWithDescription("Update")
+    let e1 = expectation(description: "Insert")
+    let e2 = expectation(description: "Remove")
+    let e3 = expectation(description: "Update")
     
     bond.didInsertListener = { a, i in
-      XCTAssert(NSThread.isMainThread(), "Invalid queue")
+      XCTAssert(Thread.isMainThread, "Invalid queue")
       e1.fulfill()
     }
     
     bond.willRemoveListener = { a, i in
-      XCTAssert(NSThread.isMainThread(), "Invalid queue")
+      XCTAssert(Thread.isMainThread, "Invalid queue")
       e2.fulfill()
     }
     
     bond.willUpdateListener = { a, i in
-      XCTAssert(NSThread.isMainThread(), "Invalid queue")
+      XCTAssert(Thread.isMainThread, "Invalid queue")
       e3.fulfill()
     }
         
     deliveredOn ->| bond
     
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
+    DispatchQueue.global(qos: .default).async {
       array.append(10)
     }
     
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
+    DispatchQueue.global(qos: .default).async {
       array.removeAtIndex(0)
     }
     
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
+    DispatchQueue.global(qos: .default).async {
       array[0] = 2
     }
     
-    waitForExpectationsWithTimeout(1, handler: nil)
+    waitForExpectations(timeout: 1, handler: nil)
   }
 }

@@ -68,8 +68,8 @@ private var enabledDynamicHandleUITextField: UInt8 = 0;
 extension UITextField /*: Dynamical, Bondable */ {
   
   public var dynText: Dynamic<String> {
-    if let d: AnyObject = objc_getAssociatedObject(self, &textDynamicHandleUITextField) as AnyObject? {
-      return (d as? Dynamic<String>)!
+    if let d = objc_getAssociatedObject(self, &textDynamicHandleUITextField) as Any? {
+      return d as! Dynamic<String>
     } else {
       let d = TextFieldDynamic<String>(control: self)
       let bond = Bond<String>() { [weak self, weak d] v in
@@ -85,8 +85,8 @@ extension UITextField /*: Dynamical, Bondable */ {
   }
 
   public var dynEnabled: Dynamic<Bool> {
-    if let d: AnyObject = objc_getAssociatedObject(self, &enabledDynamicHandleUITextField) as AnyObject? {
-      return (d as? Dynamic<Bool>)!
+    if let d = objc_getAssociatedObject(self, &enabledDynamicHandleUITextField) as Any? {
+      return d as! Dynamic<Bool>
     } else {
       let d = InternalDynamic<Bool>(self.isEnabled)
       let bond = Bond<Bool>() { [weak self] v in if let s = self { s.isEnabled = v } }

@@ -37,8 +37,8 @@ extension NSImageView: Bondable, Dynamical {
     }
 
     public var dynImage: Dynamic<NSImage?> {
-        if let d: AnyObject = objc_getAssociatedObject(self, &imageDynamicHandleNSImageView) {
-            return (d as? Dynamic<NSImage?>)!
+        if let d = objc_getAssociatedObject(self, &imageDynamicHandleNSImageView) as Any? {
+            return d as! Dynamic<NSImage?>
         } else {
             let d = InternalDynamic<NSImage?>(self.image)
             let bond = Bond<NSImage?>() { [weak self] v in

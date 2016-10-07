@@ -163,7 +163,7 @@ class ReduceTests: XCTestCase {
     let f = d1.filter { $0 > 5 }
     
     let m = f.map { (v: Int) -> String in
-      callCount++
+      callCount += 1
       return "\(v)"
     }
     
@@ -196,22 +196,22 @@ class ReduceTests: XCTestCase {
   
   func testDeliverOn() {
     let d1 = Dynamic<Int>(0)
-    let deliveredOn = deliver(d1, on: dispatch_get_main_queue())
+    let deliveredOn = deliver(d1, on: DispatchQueue.main)
     
-    let expectation = expectationWithDescription("Dynamic changed")
+    let expectation = self.expectation(description: "Dynamic changed")
     
     let bond = Bond<Int>() { v in
       XCTAssert(v == 10, "Value after dynamic change")
-      XCTAssert(NSThread.isMainThread(), "Invalid queue")
+      XCTAssert(Thread.isMainThread, "Invalid queue")
       expectation.fulfill()
     }
     
     deliveredOn ->| bond
     
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
+    DispatchQueue.global(qos: .default).async {
       d1.value = 10
     }
     
-    waitForExpectationsWithTimeout(1, handler: nil)
+    waitForExpectations(timeout: 1, handler: nil)
   }
 }

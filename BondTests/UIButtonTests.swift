@@ -16,14 +16,14 @@ class UIButtonTests: XCTestCase {
     let dynamicDriver = Dynamic<Bool>(false)
     let button = UIButton()
     
-    button.enabled = true
-    XCTAssert(button.enabled == true, "Initial value")
+    button.isEnabled = true
+    XCTAssert(button.isEnabled == true, "Initial value")
     
     dynamicDriver ->> button.designatedBond
-    XCTAssert(button.enabled == false, "Value after binding")
+    XCTAssert(button.isEnabled == false, "Value after binding")
     
     dynamicDriver.value = true
-    XCTAssert(button.enabled == true, "Value after dynamic change")
+    XCTAssert(button.isEnabled == true, "Value after dynamic change")
   }
   
   func testUIButtonTitleBond() {
@@ -46,31 +46,31 @@ class UIButtonTests: XCTestCase {
     let dynamicDriver = Dynamic<UIImage?>(nil)
     let button = UIButton()
     
-    button.setImage(image1, forState: .Normal)
-    XCTAssert(button.imageForState(.Normal) == image1, "Initial value")
+    button.setImage(image1, for: [])
+    XCTAssert(button.image(for: []) == image1, "Initial value")
     
     dynamicDriver ->> button.dynImageForNormalState
-    XCTAssert(button.imageForState(.Normal) == nil, "Value after binding")
+    XCTAssert(button.image(for: []) == nil, "Value after binding")
     
     dynamicDriver.value = image2
-    XCTAssert(button.imageForState(.Normal) == image2, "Value after dynamic change")
+    XCTAssert(button.image(for: []) == image2, "Value after dynamic change")
   }
   
   func testUIButtonDynamic() {
     let button = UIButton()
     
-    var observedValue = UIControlEvents.AllEvents
+    var observedValue = UIControlEvents.allEvents
     let bond = Bond<UIControlEvents>() { v in observedValue = v }
     
     XCTAssert(button.dynEvent.valid == false, "Should be faulty initially")
     
-    button.dynEvent.filter(==, .TouchUpInside) ->> bond
-    XCTAssert(observedValue == UIControlEvents.AllEvents, "Value after binding should not be changed")
+    button.dynEvent.filter(==, .touchUpInside) ->> bond
+    XCTAssert(observedValue == UIControlEvents.allEvents, "Value after binding should not be changed")
     
-    button.sendActionsForControlEvents(.TouchDragInside)
-    XCTAssert(observedValue == UIControlEvents.AllEvents, "Dynamic change does not pass test - should not update observedValue")
+    button.sendActions(for: .touchDragInside)
+    XCTAssert(observedValue == UIControlEvents.allEvents, "Dynamic change does not pass test - should not update observedValue")
     
-    button.sendActionsForControlEvents(.TouchUpInside)
-    XCTAssert(observedValue == UIControlEvents.TouchUpInside, "Dynamic change passes test - should update observedValue")
+    button.sendActions(for: .touchUpInside)
+    XCTAssert(observedValue == UIControlEvents.touchUpInside, "Dynamic change passes test - should update observedValue")
   }
 }

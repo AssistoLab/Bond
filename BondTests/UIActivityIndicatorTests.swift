@@ -17,12 +17,12 @@ class UIActivityIndicatorTests: XCTestCase {
     let view = UIActivityIndicatorView()
     
     view.startAnimating()
-    XCTAssert(view.isAnimating() == true, "Initial value")
+    XCTAssert(view.isAnimating == true, "Initial value")
     
     dynamicDriver ->> view.dynIsAnimating
-    XCTAssert(view.isAnimating() == false, "Value after binding")
+    XCTAssert(view.isAnimating == false, "Value after binding")
     
     dynamicDriver.value = true
-    XCTAssert(view.isAnimating() == true, "Value after dynamic change")
+    XCTAssert(view.isAnimating == true, "Value after dynamic change")
   }
 }

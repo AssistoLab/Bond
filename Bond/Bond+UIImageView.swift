@@ -31,8 +31,8 @@ var imageDynamicHandleUIImageView: UInt8 = 0;
 
 extension UIImageView: Bondable {
   public var dynImage: Dynamic<UIImage?> {
-    if let d: AnyObject = objc_getAssociatedObject(self, &imageDynamicHandleUIImageView) as AnyObject? {
-      return (d as? Dynamic<UIImage?>)!
+    if let d = objc_getAssociatedObject(self, &imageDynamicHandleUIImageView) as Any? {
+      return d as! Dynamic<UIImage?>
     } else {
       let d = InternalDynamic<UIImage?>(self.image)
       let bond = Bond<UIImage?>() { [weak self] v in if let s = self { s.image = v } }

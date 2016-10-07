@@ -97,11 +97,4 @@ class BondTests: XCTestCase {
 
     XCTAssert(bondBox1 == bondBox2, "BondBoxes that used to wrap the same Bond should be marked equal even if the wrapped Bond is lost")
   }
-
-  func testHashable() {
-    let bond = Bond<Int>({ value in })
-    let ptrHash = unsafeAddressOf(bond).hashValue
-
-    XCTAssert(bond.hashValue == ptrHash, "Each Bond should have draw its hash from memory address")
-  }
 }

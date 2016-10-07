@@ -55,7 +55,7 @@ class DynamicTests: XCTestCase {
 
     var counter = 0
     let intBond = Bond<Int>({ value in
-      counter++
+      counter += 1
     })
 
     // strong reference bonds to avoid premature dealloc

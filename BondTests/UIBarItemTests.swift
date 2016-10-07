@@ -16,14 +16,14 @@ class UIBarItemTests: XCTestCase {
     let dynamicDriver = Dynamic<Bool>(false)
     let barItem = UIBarButtonItem()
     
-    barItem.enabled = true
-    XCTAssert(barItem.enabled == true, "Initial value")
+    barItem.isEnabled = true
+    XCTAssert(barItem.isEnabled == true, "Initial value")
     
     dynamicDriver ->> barItem.designatedBond
-    XCTAssert(barItem.enabled == false, "Value after binding")
+    XCTAssert(barItem.isEnabled == false, "Value after binding")
     
     dynamicDriver.value = true
-    XCTAssert(barItem.enabled == true, "Value after dynamic change")
+    XCTAssert(barItem.isEnabled == true, "Value after dynamic change")
   }
   
   func testUIBarItemTitleBond() {

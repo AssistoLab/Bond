@@ -83,8 +83,8 @@ private var imageForNormalStateDynamicHandleUIButton: UInt8 = 0;
 extension UIButton /*: Dynamical, Bondable */ {
 
   public var dynEvent: Dynamic<UIControlEvents> {
-    if let d: AnyObject = objc_getAssociatedObject(self, &eventDynamicHandleUIButton) as AnyObject? {
-      return (d as? Dynamic<UIControlEvents>)!
+    if let d = objc_getAssociatedObject(self, &eventDynamicHandleUIButton) as Any? {
+      return d as! Dynamic<UIControlEvents>
     } else {
       let d = ButtonDynamic<UIControlEvents>(control: self)
       objc_setAssociatedObject(self, &eventDynamicHandleUIButton, d, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN_NONATOMIC)
@@ -93,8 +93,8 @@ extension UIButton /*: Dynamical, Bondable */ {
   }
   
   public var dynEnabled: Dynamic<Bool> {
-    if let d: AnyObject = objc_getAssociatedObject(self, &enabledDynamicHandleUIButton) as AnyObject? {
-      return (d as? Dynamic<Bool>)!
+    if let d = objc_getAssociatedObject(self, &enabledDynamicHandleUIButton) as Any? {
+      return d as! Dynamic<Bool>
     } else {
       let d = InternalDynamic<Bool>(self.isEnabled)
       let bond = Bond<Bool>() { [weak self] v in if let s = self { s.isEnabled = v } }
@@ -106,8 +106,8 @@ extension UIButton /*: Dynamical, Bondable */ {
   }
   
   public var dynTitle: Dynamic<String> {
-    if let d: AnyObject = objc_getAssociatedObject(self, &titleDynamicHandleUIButton) as AnyObject? {
-      return (d as? Dynamic<String>)!
+    if let d = objc_getAssociatedObject(self, &titleDynamicHandleUIButton) as Any? {
+      return d as! Dynamic<String>
     } else {
       let d = InternalDynamic<String>(self.titleLabel?.text ?? "")
       let bond = Bond<String>() { [weak self] v in if let s = self { s.setTitle(v, for: UIControlState()) } }
@@ -119,8 +119,8 @@ extension UIButton /*: Dynamical, Bondable */ {
   }
   
   public var dynImageForNormalState: Dynamic<UIImage?> {
-    if let d: AnyObject = objc_getAssociatedObject(self, &imageForNormalStateDynamicHandleUIButton) as AnyObject? {
-      return (d as? Dynamic<UIImage?>)!
+    if let d = objc_getAssociatedObject(self, &imageForNormalStateDynamicHandleUIButton) as Any? {
+      return d as! Dynamic<UIImage?>
     } else {
       let d = InternalDynamic<UIImage?>(self.image(for: UIControlState()))
       let bond = Bond<UIImage?>() { [weak self] img in if let s = self { s.setImage(img, for: UIControlState()) } }

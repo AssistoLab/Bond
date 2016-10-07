@@ -67,8 +67,8 @@ private var valueDynamicHandleUISlider: UInt8 = 0;
 
 extension UISlider /*: Dynamical, Bondable */ {
   public var dynValue: Dynamic<Float> {
-    if let d: AnyObject = objc_getAssociatedObject(self, &valueDynamicHandleUISlider) as AnyObject? {
-      return (d as? Dynamic<Float>)!
+    if let d = objc_getAssociatedObject(self, &valueDynamicHandleUISlider) as Any? {
+      return d as! Dynamic<Float>
     } else {
       let d = SliderDynamic<Float>(control: self)
       

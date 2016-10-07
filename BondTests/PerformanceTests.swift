@@ -15,16 +15,16 @@ class BondPerformanceTests: XCTestCase {
     let dynamicInt = Dynamic<Int>(0)
     let intBond = Bond<Int>({ value in })
 
-    self.measureBlock {
+    self.measure {
       dynamicInt.bindTo(intBond)
     }
   }
 
   func testUnbindAllPerformance() {
-    self.measureMetrics(self.dynamicType.defaultPerformanceMetrics(), automaticallyStartMeasuring: false) { () -> Void in
+    self.measureMetrics(BondPerformanceTests.defaultPerformanceMetrics(), automaticallyStartMeasuring: false) { () -> Void in
 
       // Setup
-      let dynamics = Array(count: 100, repeatedValue: Dynamic<Int>(0))
+      let dynamics = Array(repeating: Dynamic<Int>(0), count: 100)
       let intBond = Bond<Int>({ value in })
 
       for dynamic in dynamics {
@@ -45,7 +45,7 @@ class BondPerformanceTests: XCTestCase {
 class DynamicPerformanceTests: XCTestCase {
 
   func testDispatchPerformance() {
-    self.measureMetrics(self.dynamicType.defaultPerformanceMetrics(), automaticallyStartMeasuring: false) { () -> Void in
+    self.measureMetrics(BondPerformanceTests.defaultPerformanceMetrics(), automaticallyStartMeasuring: false) { () -> Void in
 
       // Setup
       let dynamicInt = Dynamic<Int>(0)

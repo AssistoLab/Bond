@@ -37,8 +37,8 @@ extension NSButton: Bondable, Dynamical {
     }
 
     public var dynState: Dynamic<Int> {
-        if let d: AnyObject = objc_getAssociatedObject(self, &stateDynamicHandleNSButton) {
-            return (d as? Dynamic<Int>)!
+        if let d = objc_getAssociatedObject(self, &stateDynamicHandleNSButton) as Any? {
+            return d as! Dynamic<Int>
         } else {
             let d = InternalDynamic<Int>(self.state)
             let bond = Bond<Int>() { [weak self] v in

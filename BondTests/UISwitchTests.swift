@@ -16,17 +16,17 @@ class UISwitchTests: XCTestCase {
     let dynamicDriver = Dynamic<Bool>(false)
     let uiSwitch = UISwitch()
     
-    uiSwitch.on = true
-    XCTAssert(uiSwitch.on == true, "Initial value")
+    uiSwitch.isOn = true
+    XCTAssert(uiSwitch.isOn == true, "Initial value")
     
     dynamicDriver <->> uiSwitch.dynOn
-    XCTAssert(uiSwitch.on == false, "Switch value after binding")
+    XCTAssert(uiSwitch.isOn == false, "Switch value after binding")
     
     dynamicDriver.value = true
-    XCTAssert(uiSwitch.on == true, "Switch value reflects dynamic value change")
+    XCTAssert(uiSwitch.isOn == true, "Switch value reflects dynamic value change")
     
-    uiSwitch.on = false
-    uiSwitch.sendActionsForControlEvents(.ValueChanged) //simulate user input
+    uiSwitch.isOn = false
+    uiSwitch.sendActions(for: .valueChanged) //simulate user input
     XCTAssert(dynamicDriver.value == false, "Dynamic value reflects switch value change")
   }
   

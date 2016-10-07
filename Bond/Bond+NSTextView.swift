@@ -37,8 +37,8 @@ extension NSTextView: Dynamical, Bondable {
     }
 
     public var dynString: Dynamic<String> {
-        if let d: AnyObject = objc_getAssociatedObject(self, &stringDynamicHandleNSTextView) {
-            return (d as? Dynamic<String>)!
+        if let d = objc_getAssociatedObject(self, &stringDynamicHandleNSTextView) as Any? {
+            return d as! Dynamic<String>
         } else {
             let d: InternalDynamic<String> = dynamicObservableFor(NSTextViewDidChangeTypingAttributesNotification, object: self) {
                 notification -> String in

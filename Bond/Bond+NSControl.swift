@@ -52,8 +52,8 @@ var enabledDynamicHandleNSControl: UInt8 = 0;
 extension NSControl {
 
     public var dynEnabled: Dynamic<Bool> {
-        if let d: AnyObject = objc_getAssociatedObject(self, &enabledDynamicHandleNSControl) {
-            return (d as? Dynamic<Bool>)!
+        if let d = objc_getAssociatedObject(self, &enabledDynamicHandleNSControl) as Any? {
+            return d as! Dynamic<Bool>
         } else {
             let d = InternalDynamic<Bool>(self.enabled)
             let bond = Bond<Bool>() { [weak self] v in

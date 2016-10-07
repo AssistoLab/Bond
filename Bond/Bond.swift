@@ -194,8 +194,8 @@ open class InternalDynamic<T>: Dynamic<T> {
   }
   
   open var updatingFromSelf: Bool = false
-  open var retainedObjects: [AnyObject] = []
-  open func retain(_ object: AnyObject) {
+  open var retainedObjects: [Any] = []
+  open func retain(_ object: Any) {
     retainedObjects.append(object)
   }
 }

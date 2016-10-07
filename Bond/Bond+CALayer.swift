@@ -39,8 +39,8 @@ extension CALayer: Bondable, Dynamical {
     }
 
     public var dynBackgroundColor: Dynamic<CGColor?> {
-        if let d: AnyObject = objc_getAssociatedObject(self, &backgroundColorDynamicHandleCALayer) as AnyObject? {
-            return (d as? Dynamic<CGColor?>)!
+        if let d = objc_getAssociatedObject(self, &backgroundColorDynamicHandleCALayer) as Any? {
+            return d as! Dynamic<CGColor?>
         } else {
             let d = InternalDynamic<CGColor?>(self.backgroundColor)
             let bond = Bond<CGColor?>() { [weak self] v in
@@ -57,8 +57,8 @@ extension CALayer: Bondable, Dynamical {
     }
 
     public var dynContents: Dynamic<Any?> {
-        if let d: Any = objc_getAssociatedObject(self, &contentsDynamicHandleCALayer) as Any? {
-            return (d as? Dynamic<Any?>)!
+        if let d = objc_getAssociatedObject(self, &contentsDynamicHandleCALayer) as Any? {
+            return d as! Dynamic<Any?>
         } else {
             let d = InternalDynamic<Any?>(self.contents)
             let bond = Bond<Any?>() { [weak self] v in
@@ -75,8 +75,8 @@ extension CALayer: Bondable, Dynamical {
     }
 
     public var dynOpacity: Dynamic<Float> {
-        if let d: AnyObject = objc_getAssociatedObject(self, &opacityDynamicHandleCALayer) as AnyObject? {
-            return (d as? Dynamic<Float>)!
+        if let d = objc_getAssociatedObject(self, &opacityDynamicHandleCALayer) as Any? {
+            return d as! Dynamic<Float>
         } else {
             let d = InternalDynamic<Float>(self.opacity)
             let bond = Bond<Float>() { [weak self] v in

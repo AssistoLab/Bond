@@ -16,14 +16,14 @@ class UIViewTests: XCTestCase {
     let dynamicDriver = Dynamic<Bool>(false)
     let view = UIView()
     
-    view.hidden = true
-    XCTAssert(view.hidden == true, "Initial value")
+    view.isHidden = true
+    XCTAssert(view.isHidden == true, "Initial value")
     
     dynamicDriver ->> view.dynHidden
-    XCTAssert(view.hidden == false, "Value after binding")
+    XCTAssert(view.isHidden == false, "Value after binding")
     
     dynamicDriver.value = true
-    XCTAssert(view.hidden == true, "Value after dynamic change")
+    XCTAssert(view.isHidden == true, "Value after dynamic change")
   }
   
   func testUIViewAlphaBond() {
@@ -41,16 +41,16 @@ class UIViewTests: XCTestCase {
   }
   
   func testUIViewBackgroundColorBond() {
-    let dynamicDriver = Dynamic<UIColor>(UIColor.blackColor())
+    let dynamicDriver = Dynamic<UIColor>(UIColor.black)
     let view = UIView()
     
-    view.backgroundColor = UIColor.redColor()
-    XCTAssert(view.backgroundColor == UIColor.redColor(), "Initial value")
+    view.backgroundColor = UIColor.red
+    XCTAssert(view.backgroundColor == UIColor.red, "Initial value")
     
     dynamicDriver ->> view.dynBackgroundColor
-    XCTAssert(view.backgroundColor == UIColor.blackColor(), "Value after binding")
+    XCTAssert(view.backgroundColor == UIColor.black, "Value after binding")
     
-    dynamicDriver.value = UIColor.blueColor()
-    XCTAssert(view.backgroundColor == UIColor.blueColor(), "Value after dynamic change")
+    dynamicDriver.value = UIColor.blue
+    XCTAssert(view.backgroundColor == UIColor.blue, "Value after dynamic change")
   }
 }

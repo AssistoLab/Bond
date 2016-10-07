@@ -66,8 +66,8 @@ private var onDynamicHandleUISwitch: UInt8 = 0;
 
 extension UISwitch /*: Dynamical, Bondable */ {
   public var dynOn: Dynamic<Bool> {
-    if let d: AnyObject = objc_getAssociatedObject(self, &onDynamicHandleUISwitch) as AnyObject? {
-      return (d as? Dynamic<Bool>)!
+    if let d = objc_getAssociatedObject(self, &onDynamicHandleUISwitch) as Any? {
+      return d as! Dynamic<Bool>
     } else {
       let d = SwitchDynamic<Bool>(control: self)
       

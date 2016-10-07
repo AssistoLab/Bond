@@ -37,8 +37,8 @@ extension NSColorWell: Bondable, Dynamical {
     }
 
     public var dynColor: Dynamic<NSColor> {
-        if let d: AnyObject = objc_getAssociatedObject(self, &colorDynamicHandleNSColorWell) {
-            return (d as? Dynamic<NSColor>)!
+        if let d = objc_getAssociatedObject(self, &colorDynamicHandleNSColorWell) as Any? {
+            return d as! Dynamic<NSColor>
         } else {
             let d = InternalDynamic<NSColor>(self.color)
             let bond = Bond<NSColor>() { [weak self] v in

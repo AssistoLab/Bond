@@ -26,7 +26,7 @@ class UITextViewTests: XCTestCase {
     XCTAssert(textView.text == "c", "Text view value reflects dynamic value change")
     
     textView.text = "d"
-    NSNotificationCenter.defaultCenter().postNotificationName(UITextViewTextDidChangeNotification, object: textView)
+    NotificationCenter.default.post(name: NSNotification.Name.UITextViewTextDidChange, object: textView)
     XCTAssert(textView.dynText.value == "d", "Dynamic value reflects text view value change")
     XCTAssert(dynamicDriver.value == "d", "Dynamic value reflects text view value change")
   }
@@ -45,7 +45,7 @@ class UITextViewTests: XCTestCase {
     XCTAssert(textView.attributedText.string == "c", "Text view value reflects dynamic value change")
     
     textView.attributedText = NSAttributedString(string: "d")
-    NSNotificationCenter.defaultCenter().postNotificationName(UITextViewTextDidChangeNotification, object: textView)
+    NotificationCenter.default.post(name: NSNotification.Name.UITextViewTextDidChange, object: textView)
     XCTAssert(textView.dynAttributedText.value.string == "d", "Dynamic value reflects text view value change")
     XCTAssert(dynamicDriver.value.string == "d", "Dynamic value reflects text view value change")
   }
@@ -60,8 +60,8 @@ class UITextViewTests: XCTestCase {
     let label = UILabel()
     
     XCTAssertEqual(bondedValue, "", "Initial value")
-    XCTAssertEqual(textField.text, expected: "", "Initial value")
-    XCTAssertEqual(label.text, expected: nil, "Initial value")
+    XCTAssertEqual(textField.text, "", "Initial value")
+    XCTAssertEqual(label.text, nil, "Initial value")
     
     dynamicDriver ->> textView1
     textView1 ->> textView2
@@ -70,14 +70,14 @@ class UITextViewTests: XCTestCase {
     textView2 ->> label
     
     XCTAssertEqual(bondedValue, "a", "Value after binding")
-    XCTAssertEqual(textField.text, expected: "a", "Value after binding")
-    XCTAssertEqual(label.text, expected: "a", "Value after binding")
+    XCTAssertEqual(textField.text, "a", "Value after binding")
+    XCTAssertEqual(label.text, "a", "Value after binding")
     
     dynamicDriver.value = "b"
     
     XCTAssertEqual(bondedValue, "b", "Value after change")
-    XCTAssertEqual(textField.text, expected: "b", "Value after change")
-    XCTAssertEqual(label.text, expected: "b", "Value after change")
+    XCTAssertEqual(textField.text, "b", "Value after change")
+    XCTAssertEqual(label.text, "b", "Value after change")
   }
   
   func testTwoWayOperators() {
@@ -90,7 +90,7 @@ class UITextViewTests: XCTestCase {
     
     XCTAssertEqual(dynamicDriver1.value, "a", "Initial value")
     XCTAssertEqual(dynamicDriver2.value, "z", "Initial value")
-    XCTAssertEqual(textField.text, expected: "1", "Initial value")
+    XCTAssertEqual(textField.text, "1", "Initial value")
     
     dynamicDriver1 <->> textView1
     textView1 <->> textView2
@@ -99,25 +99,25 @@ class UITextViewTests: XCTestCase {
     
     XCTAssertEqual(dynamicDriver1.value, "a", "Value after binding")
     XCTAssertEqual(dynamicDriver2.value, "a", "Value after binding")
-    XCTAssertEqual(textField.text, expected: "a", "Value after binding")
+    XCTAssertEqual(textField.text, "a", "Value after binding")
     
     dynamicDriver1.value = "b"
     
     XCTAssertEqual(dynamicDriver1.value, "b", "Value after change")
     XCTAssertEqual(dynamicDriver2.value, "b", "Value after change")
-    XCTAssertEqual(textField.text, expected: "b", "Value after change")
+    XCTAssertEqual(textField.text, "b", "Value after change")
 
     dynamicDriver2.value = "y"
     
     XCTAssertEqual(dynamicDriver1.value, "y", "Value after change")
     XCTAssertEqual(dynamicDriver2.value, "y", "Value after change")
-    XCTAssertEqual(textField.text, expected: "y", "Value after change")
+    XCTAssertEqual(textField.text, "y", "Value after change")
     
     textField.text = "2"
-    textField.sendActionsForControlEvents(.EditingChanged)
+    textField.sendActions(for: .editingChanged)
     
     XCTAssertEqual(dynamicDriver1.value, "2", "Value after change")
     XCTAssertEqual(dynamicDriver2.value, "2", "Value after change")
-    XCTAssertEqual(textField.text, expected: "2", "Value after change")
+    XCTAssertEqual(textField.text, "2", "Value after change")
   }
 }

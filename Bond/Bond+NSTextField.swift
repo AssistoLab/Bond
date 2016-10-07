@@ -71,8 +71,8 @@ extension NSTextField: Dynamical, Bondable {
     }
 
     public var dynText: Dynamic<String> {
-        if let d: AnyObject = objc_getAssociatedObject(self, &stringValueDynamicHandleNSTextField) {
-            return (d as? Dynamic<String>)!
+        if let d = objc_getAssociatedObject(self, &stringValueDynamicHandleNSTextField) as Any? {
+            return d as! Dynamic<String>
         } else {
             let d = TextFieldDynamic<String>(control: self)
           

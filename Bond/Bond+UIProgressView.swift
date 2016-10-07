@@ -31,8 +31,8 @@ private var progressDynamicHandleUIProgressView: UInt8 = 0;
 
 extension UIProgressView: Bondable {
   public var dynProgress: Dynamic<Float> {
-    if let d: AnyObject = objc_getAssociatedObject(self, &progressDynamicHandleUIProgressView) as AnyObject? {
-      return (d as? Dynamic<Float>)!
+    if let d = objc_getAssociatedObject(self, &progressDynamicHandleUIProgressView) as Any? {
+      return d as! Dynamic<Float>
     } else {
       let d = InternalDynamic<Float>(self.progress)
       let bond = Bond<Float>() { [weak self] v in if let s = self { s.progress = v } }

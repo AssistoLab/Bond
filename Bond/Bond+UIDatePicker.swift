@@ -66,8 +66,8 @@ private var dateDynamicHandleUIDatePicker: UInt8 = 0;
 
 extension UIDatePicker /*: Dynamical, Bondable */ {
   public var dynDate: Dynamic<Date> {
-    if let d: AnyObject = objc_getAssociatedObject(self, &dateDynamicHandleUIDatePicker) as AnyObject? {
-      return (d as? Dynamic<Date>)!
+    if let d = objc_getAssociatedObject(self, &dateDynamicHandleUIDatePicker) as Any? {
+      return d as! Dynamic<Date>
     } else {
       let d = DatePickerDynamic<Date>(control: self)
       

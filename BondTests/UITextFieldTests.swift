@@ -26,7 +26,7 @@ class UITextFieldTests: XCTestCase {
     XCTAssert(textField.text == "c", "Text field value reflects dynamic value change")
     
     textField.text = "d"
-    textField.sendActionsForControlEvents(.EditingChanged) //simulate user input
+    textField.sendActions(for: .editingChanged) //simulate user input
     XCTAssertEqual(textField.dynText.value, "d", "Dynamic value reflects text field value change")
     XCTAssertEqual(dynamicDriver.value, "d", "Dynamic value reflects text view field change")
   }
@@ -35,14 +35,14 @@ class UITextFieldTests: XCTestCase {
     let dynamicDriver = Dynamic<Bool>(false)
     let textField = UITextField()
 
-    textField.enabled = true
-    XCTAssert(textField.enabled == true, "Initial value")
+    textField.isEnabled = true
+    XCTAssert(textField.isEnabled == true, "Initial value")
 
     dynamicDriver ->> textField.dynEnabled
-    XCTAssert(textField.enabled == false, "Value after binding")
+    XCTAssert(textField.isEnabled == false, "Value after binding")
 
     dynamicDriver.value = true
-    XCTAssert(textField.enabled == true, "Value after dynamic change")
+    XCTAssert(textField.isEnabled == true, "Value after dynamic change")
   }
   
   func testOneWayOperators() {
@@ -56,7 +56,7 @@ class UITextFieldTests: XCTestCase {
     
     XCTAssertEqual(bondedValue, "", "Initial value")
     XCTAssertEqual(textView.text, "", "Initial value")
-    XCTAssertEqual(label.text, expected: nil, "Initial value")
+    XCTAssertEqual(label.text, nil, "Initial value")
     
     dynamicDriver ->> textField1
     textField1 ->> textField2
@@ -66,13 +66,13 @@ class UITextFieldTests: XCTestCase {
     
     XCTAssertEqual(bondedValue, "a", "Value after binding")
     XCTAssertEqual(textView.text, "a", "Value after binding")
-    XCTAssertEqual(label.text, expected: "a", "Value after binding")
+    XCTAssertEqual(label.text, "a", "Value after binding")
     
     dynamicDriver.value = "b"
     
     XCTAssertEqual(bondedValue, "b", "Value after change")
     XCTAssertEqual(textView.text, "b", "Value after change")
-    XCTAssertEqual(label.text, expected: "b", "Value after change")
+    XCTAssertEqual(label.text, "b", "Value after change")
   }
   
   func testTwoWayOperators() {
