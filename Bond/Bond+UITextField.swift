@@ -38,7 +38,7 @@ class TextFieldDynamicHelper: NSObject
     control.addTarget(self, action: #selector(TextFieldDynamicHelper.editingChanged(_:)), for: .editingChanged)
   }
   
-  func editingChanged(_ control: UITextField) {
+  @objc func editingChanged(_ control: UITextField) {
     self.listener?(control.text ?? "")
   }
   

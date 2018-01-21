@@ -38,7 +38,7 @@ class SliderDynamicHelper: NSObject
     control.addTarget(self, action: #selector(SliderDynamicHelper.valueChanged(_:)), for: .valueChanged)
   }
   
-  func valueChanged(_ slider: UISlider) {
+  @objc func valueChanged(_ slider: UISlider) {
     self.listener?(slider.value)
   }
   

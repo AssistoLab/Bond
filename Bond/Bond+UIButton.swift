@@ -41,19 +41,19 @@ class ButtonDynamicHelper: NSObject
     control.addTarget(self, action: #selector(ButtonDynamicHelper.touchCancel(_:)), for: .touchCancel)
   }
   
-  func touchDown(_ control: UIButton) {
+  @objc func touchDown(_ control: UIButton) {
     self.listener?(.touchDown)
   }
   
-  func touchUpInside(_ control: UIButton) {
+  @objc func touchUpInside(_ control: UIButton) {
     self.listener?(.touchUpInside)
   }
   
-  func touchUpOutside(_ control: UIButton) {
+  @objc func touchUpOutside(_ control: UIButton) {
     self.listener?(.touchUpOutside)
   }
   
-  func touchCancel(_ control: UIButton) {
+  @objc func touchCancel(_ control: UIButton) {
     self.listener?(.touchCancel)
   }
   

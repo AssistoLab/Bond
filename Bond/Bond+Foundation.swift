@@ -69,7 +69,7 @@ private var XXContext = 0
     NotificationCenter.default.removeObserver(self)
   }
   
-  dynamic func didReceiveNotification(_ notification: Notification) {
+  @objc dynamic func didReceiveNotification(_ notification: Notification) {
     listener(notification)
   }
 }

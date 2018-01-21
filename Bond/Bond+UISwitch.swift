@@ -38,7 +38,7 @@ class SwitchDynamicHelper: NSObject
     control.addTarget(self, action: #selector(SwitchDynamicHelper.valueChanged(_:)), for: .valueChanged)
   }
   
-  func valueChanged(_ control: UISwitch) {
+  @objc func valueChanged(_ control: UISwitch) {
     self.listener?(control.isOn)
   }
   

@@ -804,7 +804,7 @@ public extension DynamicArray
   }
   
   public func filter(_ f: @escaping (T) -> Bool) -> DynamicArray<T> {
-    return _filter(self, f: f)
+		return __filter(self, f: f)
   }
 }
 
@@ -816,7 +816,7 @@ private func _map<T, U>(_ dynamicArray: DynamicArray<T>, f: @escaping (T, Int) -
 
 // MARK: Filter
 
-private func _filter<T>(_ dynamicArray: DynamicArray<T>, f: @escaping (T) -> Bool) -> DynamicArray<T> {
+private func __filter<T>(_ dynamicArray: DynamicArray<T>, f: @escaping (T) -> Bool) -> DynamicArray<T> {
   return DynamicArrayFilterProxy(sourceArray: dynamicArray, filterf: f)
 }
 

@@ -38,7 +38,7 @@ class DatePickerDynamicHelper: NSObject
     control.addTarget(self, action: #selector(DatePickerDynamicHelper.valueChanged(_:)), for: .valueChanged)
   }
   
-  func valueChanged(_ control: UIDatePicker) {
+  @objc func valueChanged(_ control: UIDatePicker) {
     self.listener?(control.date)
   }
   
